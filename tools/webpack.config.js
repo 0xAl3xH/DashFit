@@ -1,8 +1,13 @@
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 var webpack = require('webpack');
 var path = require('path');
 
 var APP_DIR = path.resolve(__dirname, '../src/view');
 var BUILD_DIR = path.resolve(__dirname, '../build');
+
+//Plugin to turn LESS into static styles.css, stored in output path specified in config
+const extractLESS = new ExtractTextPlugin('styles.css');
 
 var config = {
   // Since our build tools and modules are in DashFit/tools and not DashFit (root dir),
@@ -19,6 +24,7 @@ var config = {
   },
   module: {
     loaders: [
+      //JSX to JS
       {
         test: /\.jsx?/,
         include : APP_DIR,
@@ -30,9 +36,17 @@ var config = {
             'babel-preset-react',
           ].map(require.resolve),
         }
-      }
+      },
+      //LESS to static CSS file
+      {
+          test: /\.less$/,
+          use: extractLESS.extract(['css-loader','less-loader']),
+      },
     ]
-  }
+  },
+  plugins: [
+    extractLESS
+  ]
 }
 
 module.exports = config;
