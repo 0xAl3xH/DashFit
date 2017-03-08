@@ -30,5 +30,8 @@
     "less-loader": "^3.0.0",
     "style-loader": "^0.13.2",
     "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "watch": "webpack -d --watch"
   }
 }
