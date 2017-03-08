@@ -32,6 +32,7 @@
     "webpack": "^2.2.1"
   },
   "scripts": {
-    "watch": "webpack -d --watch"
+    "watch": "webpack -d --watch",
+    "build": "webpack -p"
   }
 }
