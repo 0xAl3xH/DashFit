@@ -1,4 +1,5 @@
 import React from 'react';
+import './HelloWorld.less';
 
 export default class HelloWorld extends React.Component {
   render () {
