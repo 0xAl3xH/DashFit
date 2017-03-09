@@ -12,12 +12,12 @@ import MainContent from './components/MainContent/MainContent.jsx';
 // Use Skeleton styling boilerplate
 import './shared_styles/skeleton.less'
 
-const Home = () => (
-  <h2>Home page</h2>
+const Visualize = () => (
+  <h2>Visualize</h2>
 );
 
-const Page = () => (
-  <h2>Some other page</h2>
+const LogWeight = () => (
+  <h2>Weight Log</h2>
 );
 
 class App extends React.Component {
@@ -28,18 +28,22 @@ class App extends React.Component {
           DashFit 
         </Header>
         <Nav>
-          <NavItem name = "Log Weight"/>
-          <NavItem name = "Visualize"/>
+          <NavItem to = "/log-weight" name = "Log Weight"/>
+          <NavItem to = "/visualize" name = "Visualize"/>
         </Nav>
         <MainContent id = "main">
-          <Router history={hashHistory}>
-            <Route path = "/" component = {Home}/>
-            <Route path = "/page" component = {Page}/>
-          </Router>
+          {this.props.children}
         </MainContent>
       </div>
     );
   }
 }
 
-render(<App/>, document.getElementById('app'));
+render((
+  <Router history = {hashHistory}>
+    <Route path = "/" component = {App}>
+      <Route path = "log-weight" component = {LogWeight}/>
+      <Route path = "visualize" component = {Visualize}/>
+    </Route>
+  </Router>
+),document.getElementById('app'));
