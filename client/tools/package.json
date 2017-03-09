@@ -4,6 +4,7 @@
   "description": "Fitness data management dashboard",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server --env development --content-base ../build",
     "watch": "webpack -d --watch",
     "build": "webpack -p"
   },
@@ -32,6 +33,7 @@
     "less": "^2.7.2",
     "less-loader": "^3.0.0",
     "style-loader": "^0.13.2",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
   }
 }
