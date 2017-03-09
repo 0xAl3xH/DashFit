@@ -10,12 +10,12 @@ var BUILD_DIR = path.resolve(__dirname, '../build');
 const extractLESS = new ExtractTextPlugin('styles.css');
 
 var config = {
-  // Since our build tools and modules are in DashFit/tools and not DashFit (root dir),
-  // add the directory to be resolved so WebPack finds it
   resolve: {
+    // Since our build tools and modules are in DashFit/tools and not DashFit (root dir),
+    // add the directory to be resolved so WebPack finds it
     modules: [
       path.resolve(__dirname,'node_modules')
-    ]
+    ],
   },
   entry: APP_DIR + '/index.jsx',
   output: {
