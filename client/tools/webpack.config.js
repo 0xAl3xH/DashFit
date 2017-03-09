@@ -1,10 +1,10 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const path = require('path');
 
-var APP_DIR = path.resolve(__dirname, '../src/view');
-var BUILD_DIR = path.resolve(__dirname, '../build');
+const APP_DIR = path.resolve(__dirname, '../src/view');
+const BUILD_DIR = path.resolve(__dirname, '../build');
 
 //Plugin to turn LESS into static styles.css, stored in output path specified in config
 const extractLESS = new ExtractTextPlugin('styles.css');
