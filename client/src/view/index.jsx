@@ -8,32 +8,43 @@ import Header from './components/Header/Header.jsx';
 import Nav from './components/Nav/Nav.jsx';
 import NavItem from './components/Nav/NavItem/NavItem.jsx';
 import MainContent from './components/MainContent/MainContent.jsx';
+import Title from './components/MainContent/Title/Title.jsx';
+
+import LogWeight from './components/LogWeightWidget/LogWeightWidget.jsx';
 
 // Use Skeleton styling boilerplate
 import './shared_styles/skeleton.less'
 
 const Visualize = () => (
-  <h2>Visualize</h2>
-);
-
-const LogWeight = () => (
-  <h2>Weight Log</h2>
+    <MainContent>
+      <Title>Visualize</Title>
+    </MainContent>
 );
 
 class App extends React.Component {
+  
+  constructor() {
+    super();  
+    this.state=({offset:0});
+  }
+  
+  headerOffsetHandler (height) {
+    this.setState({offset:height});
+  }
+  
   render () {
     return (
       <div>
-        <Header> 
+        <Header className="header" headerOffsetFunc={this.headerOffsetHandler.bind(this)}> 
           <Link to = "/" className = "title">DashFit </Link>
         </Header>
-        <Nav>
-          <NavItem to = "/" name = "Log Weight"/>
-          <NavItem to = "/visualize" name = "Visualize"/>
-        </Nav>
-        <MainContent id = "main">
+        <div style={{height:window.innerHeight-this.state.offset}}>
+          <Nav>
+            <NavItem to = "/" name = "Log Weight"/>
+            <NavItem to = "/visualize" name = "Visualize"/>
+          </Nav>
           {this.props.children}
-        </MainContent>
+        </div>
       </div>
     );
   }

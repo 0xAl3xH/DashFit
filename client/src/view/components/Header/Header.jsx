@@ -9,10 +9,31 @@ import './Header.less';
 **/
 
 export default class Header extends React.Component {
+  constructor() {
+    super();
+    this.state = {height:-1};
+  }
+  
+  getHeight() {
+    return this.refs.header.clientHeight;
+  }
+  
+  headerOffsetHandler(initial) {  
+    if (this.state.height != this.getHeight()) {
+      this.setState({height:this.getHeight()});
+      this.props.headerOffsetFunc(this.getHeight());
+    }
+  }
+  
+  componentDidMount() {
+    this.headerOffsetHandler(); 
+    window.addEventListener("resize", this.headerOffsetHandler.bind(this));
+  }
+  
   render () {
     return ( 
-      <div className = "header">
-        <div className = "header-title"> { this.props.children } </div>
+      <div className= "header" ref="header">
+        <div className = "header-title">{this.props.children}</div>
       </div>
     );
   }
