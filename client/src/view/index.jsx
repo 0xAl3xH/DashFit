@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {Router, Route, Link, hashHistory} from 'react-router';
+import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router';
 
 // Import React components
 import HelloWorld from './components/Test/HelloWorld.jsx';
@@ -25,10 +25,10 @@ class App extends React.Component {
     return (
       <div>
         <Header> 
-          DashFit 
+          <Link to = "/" className = "title">DashFit </Link>
         </Header>
         <Nav>
-          <NavItem to = "/log-weight" name = "Log Weight"/>
+          <NavItem to = "/" name = "Log Weight"/>
           <NavItem to = "/visualize" name = "Visualize"/>
         </Nav>
         <MainContent id = "main">
@@ -42,7 +42,7 @@ class App extends React.Component {
 render((
   <Router history = {hashHistory}>
     <Route path = "/" component = {App}>
-      <Route path = "log-weight" component = {LogWeight}/>
+      <IndexRoute component = {LogWeight}/>
       <Route path = "visualize" component = {Visualize}/>
     </Route>
   </Router>
