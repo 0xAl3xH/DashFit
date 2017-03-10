@@ -69,8 +69,17 @@
 .nav-item {
   background-color: #f8f8f8;
   border-bottom: 1px solid #e7e7e7;
-  color: #337ab7;
+}
+.nav-item .nav-item-link {
   padding: 0.809rem;
+  display: block;
+  text-decoration: none;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+.nav-item .nav-item-link:hover,
+.nav-item .nav-item-link:active {
+  background-color: #e7e7e7;
+  color: #23527c;
 }
 /**
 * Colors
