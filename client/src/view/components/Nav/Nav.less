@@ -1,9 +1,10 @@
-@import '../../shared_styles/colors.less';
-@import '../../shared_styles/sizes.less';
+@import '../../shared_styles/shared_imports.less';
 
 .nav-container {
   background-color:@gray;
-  height: @viewport_height;
+  height: inherit;
   width: @nav_width;
   position:absolute;
+  border-right: 1px solid @dark_gray;
+  overflow: scroll;
 }

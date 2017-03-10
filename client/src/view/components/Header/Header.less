@@ -1,15 +1,15 @@
-@import '../../shared_styles/colors.less';
-@import '../../shared_styles/sizes.less';
+@import '../../shared_styles/shared_imports.less';
 
 .header {
   background-color: @gray;
-  border-bottom: solid 1px @dark_gray;
   color: @text_gray;
+  .border_bottom;
 }
 
 .header-title {
   font-size: @font_title;
   display: inline-block;
+  padding: 0 0.5rem * @golden;
   a {
     text-decoration: none;
     color: @text_gray;

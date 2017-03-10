@@ -1,8 +1,9 @@
-@import '../../shared_styles/colors.less';
-@import '../../shared_styles/sizes.less';
+@import '../../shared_styles/shared_imports.less';
 
 .main-content-container {
   margin-left: @nav_width;
-  height: @viewport_height;
+  padding: 0 @main_padding;
+  height: inherit;
   box-sizing: border-box;
+  overflow: scroll;
 }
