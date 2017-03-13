@@ -1,0 +1,24 @@
+{
+  "name": "dashfit-server",
+  "version": "1.0.0",
+  "description": "Backend implementation for DashFit",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/al3x-huang/DashFit.git"
+  },
+  "author": "Alex Huang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/al3x-huang/DashFit/issues"
+  },
+  "homepage": "https://github.com/al3x-huang/DashFit#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
+  }
+}
