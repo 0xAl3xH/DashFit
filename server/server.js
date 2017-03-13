@@ -31,7 +31,7 @@ var mg = require('mongoose');
 var logWeight = require('./modules/log-weight.js')(mg,config.mongoURI);
 
 app.use(bodyParser.json());
-app.use('/',router);
+app.use('/weight',logWeight);
 app.use(express.static(__dirname + '/../client/build'));
 
 console.log("Server started, listening on port 3000");
