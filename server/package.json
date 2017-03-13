@@ -19,6 +19,7 @@
   "homepage": "https://github.com/al3x-huang/DashFit#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "mongoose": "^4.8.7"
   }
 }

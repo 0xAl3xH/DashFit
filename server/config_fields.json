@@ -1,0 +1,6 @@
+{
+    "mongoURI" : {
+        "description" : "Full URI of the database server to connect to (e.g. mongodb://fred:password@foobar:27017/test)",
+        "required" : true
+    }
+}
