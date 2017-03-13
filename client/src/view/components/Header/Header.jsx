@@ -30,6 +30,10 @@ export default class Header extends React.Component {
     window.addEventListener("resize", this.headerOffsetHandler.bind(this));
   }
   
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.headerOffsetHandler.bind(this));
+  }
+  
   render () {
     return ( 
       <div className= "header" ref="header">
