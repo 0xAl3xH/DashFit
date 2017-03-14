@@ -8,15 +8,17 @@ import MainContent from '../MainContent/MainContent.jsx';
 import Title from '../MainContent/Title/Title.jsx';
 
 export default class LogWeight extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      average: undefined,
-      weights: {
-      },
+      average: null,
+      weights: {},
       curDate: moment(),
-      rows:[]
+      rows:[],
+      weightRecords:[],
+      curWeight: '',
     };
+    this.handleChangeInput = this.handleChangeInput.bind(this);
   }
   
   handleChange(date) {
@@ -25,14 +27,20 @@ export default class LogWeight extends React.Component {
     });
   }
   
+  handleChangeInput(e) {
+    this.setState({curWeight: e.target.value});
+  }
+  
   componentDidMount() {
     //Get weight data
     this.getWeek().then(res =>{
       return res.json();
     }).then(records => {
-      this.setState({average: this.calcAverage(records)});
+      this.setState({weightRecords:records});
+      this.setState({average: this.calcAverage(records.filter((record) => "weight" in record))});
       var rows = this.renderRows(records);
       this.setState({rows:rows});
+      this.setState({curWeight: this.getRecordByDate(moment(this.state.curDate).subtract(1,'days')).weight});
     });
   }
   
@@ -43,6 +51,7 @@ export default class LogWeight extends React.Component {
     return average
   }
   
+  //TODO: Implement date specific week data GET
   getWeek(date) {
     var myHeaders = {
       "Content-Type":'application/json'
@@ -60,14 +69,18 @@ export default class LogWeight extends React.Component {
     rows.push(
       <tr key={i}>
         <td>{moment(records[i].time).format('M/D')}</td>
-        <td>{records[i].weight.toFixed(1)}</td>
+        <td>{records[i].weight ? records[i].weight.toFixed(1) : null}</td>
       </tr>);
   }  
   return rows;
   }
   
+  getRecordByDate(date) {
+    var weight = this.state.weightRecords.filter((record) => date.isSame(record.time,'day'));
+    return weight[0] != null ? weight[0] : {weight:null};
+  }
+  
   render () {
-    const weights = this.state.weights;
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
@@ -77,7 +90,7 @@ export default class LogWeight extends React.Component {
         onChange={this.handleChange.bind(this)}/>
         </div>
         <div>Weekly Average: { this.state.average }</div>
-        <table  className = "u-full-width weight-table">
+        <table className = "u-full-width weight-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -89,7 +102,7 @@ export default class LogWeight extends React.Component {
           </tbody>
         </table>
         <div className = "three columns">
-          Today's weight: <input className="u-full-width" type="text"/>
+          Today's weight: <input className="u-full-width" type="text" value={this.state.curWeight} onChange={this.handleChangeInput}/>
           <input className="button-primary" type="submit" value="Submit"/>
         </div>
       </MainContent>
