@@ -6,7 +6,10 @@ module.exports = (function (server_mg, mg_URI) {
   var router = express.Router();
   var moment = require('moment');
   
-  mg.connect(mg_URI);
+  var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+                  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };   
+  
+  mg.connect(mg_URI,options);
   
   var weightRecord = mg.model("weight_record", {
     time: Date,
@@ -27,10 +30,9 @@ module.exports = (function (server_mg, mg_URI) {
   
   router.get('/', function(req, res){
     bounds = getWeek(moment());
+    console.log(bounds);
     startWeek = bounds[0];
     endWeek = bounds[1];
-    
-    console.log(bounds);
     
     weightRecord.find({
       time: {
@@ -39,6 +41,28 @@ module.exports = (function (server_mg, mg_URI) {
       }
     }, function(err, records) {
       if (err) return console.log(err);
+      var recordsMap = {};
+      records.map(function(record) {
+        recordsMap[moment(record.time).day()] = [record.weight,record._id];
+      });
+      console.log(recordsMap);
+      var start = moment(startWeek).subtract(1, 'd');
+      records = []
+      for (var i = 0; i < 7; i++) {
+        var date = moment(start).clone().add(i, "d")
+        var day = moment(start).clone().add(i, "d").day();
+        if (day in recordsMap) {
+          records.push({
+            id: recordsMap[day][1],
+            time: date,
+            weight: recordsMap[day][0]
+          });
+        } else {
+          records.push({
+            time: date
+          });
+        }
+      }
       console.log(records);
       res.json(records);
     });
