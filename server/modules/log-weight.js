@@ -16,20 +16,33 @@ module.exports = (function (server_mg, mg_URI) {
     weight: Number 
   });
   
+  /**
+  * Takes a json item representing a weight record and adds it to the db.
+  * If a record exists with the same date, update it with the new weight info.
+  **/
   function addRecord(jsonItem, res) {
-    var record = new weightRecord({
-      time: jsonItem.time,
-      weight: jsonItem.weight
-    });
-    record.save(function(err, userRecord){
+    var momentTime = moment(new Date(jsonItem.time)).utc(),
+        query = {
+          time: {
+            $gte: momentTime.clone().startOf('day').toDate(),
+            $lt: momentTime.clone().endOf('day').toDate()
+          }
+        },
+        update = {
+          $setOnInsert:{time:jsonItem.time}, 
+          $set:{weight: jsonItem.weight}
+        },
+        options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
+    
+    weightRecord.findOneAndUpdate(query, update, options, function(err, result){
       if (err) return console.log(err);
-      console.log(userRecord);
-      res.json(userRecord);
+      console.log("Saved/modified:" + result);
+      res.status(200).json(result);
     });
   }
   
-  router.get('/', function(req, res){
-    bounds = getWeek(moment());
+  function returnRecord(time, res) {
+    bounds = getWeek(time);
     console.log(bounds);
     startWeek = bounds[0];
     endWeek = bounds[1];
@@ -46,7 +59,7 @@ module.exports = (function (server_mg, mg_URI) {
         recordsMap[moment(record.time).day()] = [record.weight,record._id];
       });
       console.log(recordsMap);
-      var start = moment(startWeek).subtract(1, 'd');
+      var start = moment(startWeek).utc().startOf('day');
       records = []
       for (var i = 0; i < 7; i++) {
         var date = moment(start).clone().add(i, "d")
@@ -65,11 +78,18 @@ module.exports = (function (server_mg, mg_URI) {
       }
       console.log(records);
       res.json(records);
-    });
+    });  
+  }
+  
+  router.post('/query', function(req, res){
+    var time = moment(new Date(req.body.time)).utc();
+    console.log(time);
+    returnRecord(time,res);
   });
   
-  router.post('/', function(req, res){
-    
+  router.post('/submit', function(req, res){
+    console.log(req.body);
+    addRecord(req.body,res);
   });
   
   return router
@@ -80,7 +100,9 @@ module.exports = (function (server_mg, mg_URI) {
 * containing the [startDate, endDate] of the
 * week
 */
+
 function getWeek(date) {
-  
-  return [date.clone().startOf('week').subtract(4,'days').toDate(), date.clone().endOf('week').subtract(5,'days').toDate()];
+  var start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days');
+  var end = start.clone().add(6, 'days');
+  return [start.utc().startOf('day').toDate(), end.utc().endOf('day').toDate()];
 }

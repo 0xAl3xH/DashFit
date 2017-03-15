@@ -19,12 +19,29 @@ export default class LogWeight extends React.Component {
       curWeight: '',
     };
     this.handleChangeInput = this.handleChangeInput.bind(this);
+    this.handleChangeDate = this.handleChangeDate.bind(this);
+    this.submitWeight = this.submitWeight.bind(this);
   }
   
-  handleChange(date) {
+  setNewState(date) {
+    this.getWeek(date).then(res =>{
+      return res.json();
+    }).then(records => {
+      this.setState({weightRecords:records});
+      this.setState({average: this.calcAverage(records.filter((record) => "weight" in record))});
+      var rows = this.renderRows(records);
+      this.setState({rows:rows});
+      
+      var cur_weight = this.getRecordByDate(moment(this.state.curDate)).weight
+      this.setState({curWeight: cur_weight ? cur_weight : ""});
+    });
+  }
+  
+  handleChangeDate(date) {
     this.setState({
       curDate: date
     });
+    this.setNewState(date);
   }
   
   handleChangeInput(e) {
@@ -33,33 +50,26 @@ export default class LogWeight extends React.Component {
   
   componentDidMount() {
     //Get weight data
-    this.getWeek().then(res =>{
-      return res.json();
-    }).then(records => {
-      this.setState({weightRecords:records});
-      this.setState({average: this.calcAverage(records.filter((record) => "weight" in record))});
-      var rows = this.renderRows(records);
-      this.setState({rows:rows});
-      this.setState({curWeight: this.getRecordByDate(moment(this.state.curDate).subtract(1,'days')).weight});
-    });
+    this.setNewState(moment());
   }
   
   calcAverage(records) {
+    if (!records.length) return null;
     const weightsSum = records.reduce((a, b) => ({weight: a.weight + b.weight})).weight;
     var average = weightsSum/records.length;
     average = (Math.round(average * 10) / 10).toFixed(1);
     return average
   }
   
-  //TODO: Implement date specific week data GET
   getWeek(date) {
     var myHeaders = {
       "Content-Type":'application/json'
     };
     
-    return fetch('/weight',{
-      method: 'GET',
+    return fetch('/weight/query',{
+      method:'POST',
       headers: myHeaders,
+      body: JSON.stringify({time:date})
     });
   }
   
@@ -80,14 +90,30 @@ export default class LogWeight extends React.Component {
     return weight[0] != null ? weight[0] : {weight:null};
   }
   
+  submitWeight() {
+    var myHeaders = {
+      "Content-Type":'application/json'
+    };
+    
+    return fetch('/weight/submit',{
+      method:'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        time:this.state.curDate,
+        weight: this.state.curWeight
+      })
+    }).then(res =>{
+      console.log(res);
+      this.setNewState(this.state.curDate);
+    });  
+  }
+  
   render () {
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
         <div>
-          Select a date: <DatePicker
-        selected={this.state.curDate}
-        onChange={this.handleChange.bind(this)}/>
+          Select a date: <DatePicker selected={this.state.curDate} onChange={this.handleChangeDate}/>
         </div>
         <div>Weekly Average: { this.state.average }</div>
         <table className = "u-full-width weight-table">
@@ -103,7 +129,7 @@ export default class LogWeight extends React.Component {
         </table>
         <div className = "three columns">
           Today's weight: <input className="u-full-width" type="text" value={this.state.curWeight} onChange={this.handleChangeInput}/>
-          <input className="button-primary" type="submit" value="Submit"/>
+          <input className="button-primary" type="submit" value="Submit" onClick={this.submitWeight}/>
         </div>
       </MainContent>
     );
