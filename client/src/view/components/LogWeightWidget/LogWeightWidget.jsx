@@ -11,9 +11,7 @@ export default class LogWeight extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      weights: {},
       curDate: moment(),
-      rows:[],
       weightRecords:[],
       curWeight: '',
     };
@@ -27,9 +25,6 @@ export default class LogWeight extends React.Component {
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
-      var rows = this.renderRows(records);
-      this.setState({rows:rows});
-      
       var cur_weight = this.getRecordByDate(moment(this.state.curDate)).weight
       this.setState({curWeight: cur_weight ? cur_weight : ""});
     });
@@ -125,7 +120,7 @@ export default class LogWeight extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.rows}
+            {this.renderRows(records)}
           </tbody>
         </table>
         <div className = "three columns">
