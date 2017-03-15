@@ -1,7 +1,7 @@
-#DashFit
+# DashFit
 A SPA (single page application) dashboard that serves to facilitates logging of user dietary and weight information. Specifically, it is a platform to allow user input, storage, and viewing of his/her fitness metrics.
 
-####Features
+#### Features
 1. User authorization system 
     - Support of email and social media log in 
 2. Weight log input 
