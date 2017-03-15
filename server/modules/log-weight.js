@@ -1,19 +1,29 @@
 module.exports = (function (server_mg, mg_URI) {
   
-  var mg = server_mg;
-  var express = require('express');
-  var app = express();
-  var router = express.Router();
-  var moment = require('moment');
-  
-  var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
+  const mg = server_mg,
+        express = require('express'),
+        app = express(),
+        router = express.Router(),
+        moment = require('moment'),
+        options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
                   replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };   
   
   mg.connect(mg_URI,options);
   
-  var weightRecord = mg.model("weight_record", {
+  const weightRecord = mg.model("weight_record", {
     time: Date,
     weight: Number 
+  });
+  
+  router.post('/query', function(req, res){
+    const time = moment(new Date(req.body.time));
+    console.log(time);
+    returnRecord(time,res);
+  });
+  
+  router.post('/submit', function(req, res){
+    console.log(req.body);
+    addRecord(req.body,res);
   });
   
   /**
@@ -21,18 +31,18 @@ module.exports = (function (server_mg, mg_URI) {
   * If a record exists with the same date, update it with the new weight info.
   **/
   function addRecord(jsonItem, res) {
-    var momentTime = moment(new Date(jsonItem.time)).utc(),
-        query = {
-          time: {
-            $gte: momentTime.clone().startOf('day').toDate(),
-            $lt: momentTime.clone().endOf('day').toDate()
-          }
-        },
-        update = {
-          $setOnInsert:{time:jsonItem.time}, 
-          $set:{weight: jsonItem.weight}
-        },
-        options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
+    const momentTime = moment(new Date(jsonItem.time)).utc(),
+          query = {
+            time: {
+              $gte: momentTime.clone().startOf('day').toDate(),
+              $lt: momentTime.clone().endOf('day').toDate()
+            }
+          },
+          update = {
+            $setOnInsert:{time:jsonItem.time}, 
+            $set:{weight: jsonItem.weight}
+          },
+          options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
     
     weightRecord.findOneAndUpdate(query, update, options, function(err, result){
       if (err) return console.log(err);
@@ -42,10 +52,10 @@ module.exports = (function (server_mg, mg_URI) {
   }
   
   function returnRecord(time, res) {
-    bounds = getWeek(time);
+    let bounds = getWeek(time),
+        startWeek = bounds[0],
+        endWeek = bounds[1];
     console.log(bounds);
-    startWeek = bounds[0];
-    endWeek = bounds[1];
     
     weightRecord.find({
       time: {
@@ -54,13 +64,13 @@ module.exports = (function (server_mg, mg_URI) {
       }
     }, function(err, records) {
       if (err) return console.log(err);
-      var recordsMap = {};
+      const recordsMap = {};
       console.log(records);
       records.map(function(record) {
         recordsMap[moment(record.time).startOf('day').utc()] = [record.weight, record._id, record.time];
       });
       console.log(recordsMap);
-      var start = moment(startWeek).startOf('day').utc();
+      const start = moment(startWeek).startOf('day').utc();
       records = []
       for (var i = 0; i < 7; i++) {
         var date = moment(start).clone().add(i, "d")
@@ -79,19 +89,7 @@ module.exports = (function (server_mg, mg_URI) {
       console.log(records);
       res.json(records);
     });  
-  }
-  
-  router.post('/query', function(req, res){
-    var time = moment(new Date(req.body.time));
-    console.log(time);
-    returnRecord(time,res);
-  });
-  
-  router.post('/submit', function(req, res){
-    console.log(req.body);
-    addRecord(req.body,res);
-  });
-  
+  }  
   return router
 });
   
