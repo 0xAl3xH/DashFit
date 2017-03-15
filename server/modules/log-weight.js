@@ -55,20 +55,20 @@ module.exports = (function (server_mg, mg_URI) {
     }, function(err, records) {
       if (err) return console.log(err);
       var recordsMap = {};
+      console.log(records);
       records.map(function(record) {
-        recordsMap[moment(record.time).day()] = [record.weight,record._id];
+        recordsMap[moment(record.time).startOf('day').utc()] = [record.weight, record._id, record.time];
       });
       console.log(recordsMap);
-      var start = moment(startWeek).utc().startOf('day');
+      var start = moment(startWeek).startOf('day').utc();
       records = []
       for (var i = 0; i < 7; i++) {
         var date = moment(start).clone().add(i, "d")
-        var day = moment(start).clone().add(i, "d").day();
-        if (day in recordsMap) {
+        if (date in recordsMap) {
           records.push({
-            id: recordsMap[day][1],
-            time: date,
-            weight: recordsMap[day][0]
+            id: recordsMap[date][1],
+            time: recordsMap[date][2],
+            weight: recordsMap[date][0]
           });
         } else {
           records.push({
@@ -82,7 +82,7 @@ module.exports = (function (server_mg, mg_URI) {
   }
   
   router.post('/query', function(req, res){
-    var time = moment(new Date(req.body.time)).utc();
+    var time = moment(new Date(req.body.time));
     console.log(time);
     returnRecord(time,res);
   });
@@ -104,5 +104,5 @@ module.exports = (function (server_mg, mg_URI) {
 function getWeek(date) {
   var start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days');
   var end = start.clone().add(6, 'days');
-  return [start.utc().startOf('day').toDate(), end.utc().endOf('day').toDate()];
+  return [start.startOf('day').utc().toDate(), end.endOf('day').utc().toDate()];
 }

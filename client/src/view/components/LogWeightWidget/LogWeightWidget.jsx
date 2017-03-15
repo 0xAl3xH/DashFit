@@ -78,7 +78,7 @@ export default class LogWeight extends React.Component {
   for (var i = 0; i < records.length; i++) {
     rows.push(
       <tr key={i}>
-        <td>{moment(records[i].time).format('M/D')}</td>
+        <td>{moment(records[i].time).local().format('M/D')}</td>
         <td>{records[i].weight ? records[i].weight.toFixed(1) : null}</td>
       </tr>);
   }  
