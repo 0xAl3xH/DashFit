@@ -20,12 +20,23 @@ export default class LogWeight extends React.Component {
     this.submitWeight = this.submitWeight.bind(this);
   }
   
+  getWeek(date) {
+  const myHeaders = {
+    "Content-Type":'application/json'
+  };
+  return fetch('/weight/query',{
+    method:'POST',
+    headers: myHeaders,
+    body: JSON.stringify({time:date})
+  });
+  }
+  
   setNewState(date) {
     this.getWeek(date).then(res =>{
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
-      var cur_weight = this.getRecordByDate(moment(this.state.curDate)).weight
+      const cur_weight = this.getRecordByDate(moment(this.state.curDate)).weight
       this.setState({curWeight: cur_weight ? cur_weight : ""});
     });
   }
@@ -49,26 +60,14 @@ export default class LogWeight extends React.Component {
   average(records) {
     if (!records.length) return null;
     const weightsSum = records.reduce((a, b) => ({weight: a.weight + b.weight})).weight;
-    var average = weightsSum/records.length;
+    let average = weightsSum/records.length;
     average = (Math.round(average * 10) / 10).toFixed(1);
     return average
   }
   
-  getWeek(date) {
-    var myHeaders = {
-      "Content-Type":'application/json'
-    };
-    
-    return fetch('/weight/query',{
-      method:'POST',
-      headers: myHeaders,
-      body: JSON.stringify({time:date})
-    });
-  }
-  
   renderRows(records) {
-  var rows = [];
-  for (var i = 0; i < records.length; i++) {
+  const rows = [];
+  for (let i = 0; i < records.length; i++) {
     rows.push(
       <tr key={i}>
         <td>{moment(records[i].time).local().format('M/D')}</td>
@@ -79,12 +78,12 @@ export default class LogWeight extends React.Component {
   }
   
   getRecordByDate(date) {
-    var weight = this.state.weightRecords.filter((record) => date.isSame(record.time,'day'));
+    const weight = this.state.weightRecords.filter((record) => date.isSame(record.time,'day'));
     return weight[0] != null ? weight[0] : {weight:null};
   }
   
   submitWeight() {
-    var myHeaders = {
+    const myHeaders = {
       "Content-Type":'application/json'
     };
     
@@ -103,7 +102,7 @@ export default class LogWeight extends React.Component {
   
   render () {
     
-    var records = this.state.weightRecords;
+    const records = this.state.weightRecords;
     
     return ( 
       <MainContent>
