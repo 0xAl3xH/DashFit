@@ -11,7 +11,6 @@ export default class LogWeight extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      average: null,
       weights: {},
       curDate: moment(),
       rows:[],
@@ -28,7 +27,6 @@ export default class LogWeight extends React.Component {
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
-      this.setState({average: this.calcAverage(records.filter((record) => "weight" in record))});
       var rows = this.renderRows(records);
       this.setState({rows:rows});
       
@@ -53,7 +51,7 @@ export default class LogWeight extends React.Component {
     this.setNewState(moment());
   }
   
-  calcAverage(records) {
+  average(records) {
     if (!records.length) return null;
     const weightsSum = records.reduce((a, b) => ({weight: a.weight + b.weight})).weight;
     var average = weightsSum/records.length;
@@ -109,13 +107,16 @@ export default class LogWeight extends React.Component {
   }
   
   render () {
+    
+    var records = this.state.weightRecords;
+    
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
         <div>
           Select a date: <DatePicker selected={this.state.curDate} onChange={this.handleChangeDate}/>
         </div>
-        <div>Weekly Average: { this.state.average }</div>
+        <div>Weekly Average: { this.average(records.filter((record) => "weight" in record)) }</div>
         <table className = "u-full-width weight-table">
           <thead>
             <tr>
