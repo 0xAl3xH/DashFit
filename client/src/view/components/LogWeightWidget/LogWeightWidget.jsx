@@ -11,7 +11,7 @@ export default class LogWeight extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      curDate: moment(),
+      selectedDate: moment(),
       weightRecords:[],
       curWeight: '',
     };
@@ -36,14 +36,14 @@ export default class LogWeight extends React.Component {
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
-      const cur_weight = this.getRecordByDate(moment(this.state.curDate)).weight
+      const cur_weight = this.getRecordByDate(moment(this.state.selectedDate)).weight
       this.setState({curWeight: cur_weight ? cur_weight : ""});
     });
   }
   
   handleChangeDate(date) {
     this.setState({
-      curDate: date
+      selectedDate: date
     });
     this.setNewState(date);
   }
@@ -91,12 +91,12 @@ export default class LogWeight extends React.Component {
       method:'POST',
       headers: myHeaders,
       body: JSON.stringify({
-        time:this.state.curDate,
+        time:this.state.selectedDate,
         weight: this.state.curWeight
       })
     }).then(res =>{
       console.log(res);
-      this.setNewState(this.state.curDate);
+      this.setNewState(this.state.selectedDate);
     });  
   }
   
@@ -107,8 +107,16 @@ export default class LogWeight extends React.Component {
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
-        <div>
-          Select a date: <DatePicker selected={this.state.curDate} onChange={this.handleChangeDate}/>
+        <div className="row">
+          <div className = "six columns">
+            <label htmlFor="datepicker">Select Date:</label>
+            <DatePicker id="datepicker" selected={this.state.selectedDate} onChange={this.handleChangeDate}/>
+          </div>
+          <div className = "six columns">
+            <label htmlFor="weight_input">Today's Weight:</label>
+            <input id="weight_input" type="text" value={this.state.curWeight} onChange={this.handleChangeInput}/>
+            <input className="button-primary" type="submit" value="Submit" onClick={this.submitWeight}/>
+          </div>
         </div>
         <div>Weekly Average: { this.average(records.filter((record) => "weight" in record)) }</div>
         <table className = "u-full-width weight-table">
@@ -122,10 +130,6 @@ export default class LogWeight extends React.Component {
             {this.renderRows(records)}
           </tbody>
         </table>
-        <div className = "three columns">
-          Today's weight: <input className="u-full-width" type="text" value={this.state.curWeight} onChange={this.handleChangeInput}/>
-          <input className="button-primary" type="submit" value="Submit" onClick={this.submitWeight}/>
-        </div>
       </MainContent>
     );
   }
