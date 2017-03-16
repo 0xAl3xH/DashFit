@@ -185,6 +185,9 @@
 .weight-table th {
   width: 50%;
 }
+#datepicker {
+  width: 100%;
+}
 .react-datepicker__tether-element-attached-top .react-datepicker__triangle {
   margin-left: -8px;
   position: absolute;

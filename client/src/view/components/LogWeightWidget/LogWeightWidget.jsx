@@ -1,11 +1,10 @@
+//TODO: Look into webpack aliasing for relative imports to avoid ../../../........hell
 import React from 'react';
 import './LogWeightWidget.less';
-import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.less';
-
 import MainContent from '../MainContent/MainContent.jsx';
 import Title from '../MainContent/Title/Title.jsx';
+import WeightForm from './WeightForm/WeightForm.jsx';
 
 export default class LogWeight extends React.Component {
   constructor(props) {
@@ -54,7 +53,7 @@ export default class LogWeight extends React.Component {
   
   componentDidMount() {
     //Get weight data
-    this.setNewState(moment());
+    this.setNewState(this.state.selectedDate);
   }
   
   average(records) {
@@ -107,17 +106,7 @@ export default class LogWeight extends React.Component {
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
-        <div className="row">
-          <div className = "six columns">
-            <label htmlFor="datepicker">Select Date:</label>
-            <DatePicker id="datepicker" selected={this.state.selectedDate} onChange={this.handleChangeDate}/>
-          </div>
-          <div className = "six columns">
-            <label htmlFor="weight_input">Today's Weight:</label>
-            <input id="weight_input" type="text" value={this.state.curWeight} onChange={this.handleChangeInput}/>
-            <input className="button-primary" type="submit" value="Submit" onClick={this.submitWeight}/>
-          </div>
-        </div>
+        <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} onSubmit={this.submitWeight}/>
         <div>Weekly Average: { this.average(records.filter((record) => "weight" in record)) }</div>
         <table className = "u-full-width weight-table">
           <thead>
