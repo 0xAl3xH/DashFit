@@ -2,6 +2,9 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router';
 
+// Use Skeleton styling boilerplate
+import './shared_styles/skeleton.less'
+
 // Import React components
 import HelloWorld from './components/Test/HelloWorld.jsx';
 import Header from './components/Header/Header.jsx';
@@ -9,11 +12,8 @@ import Nav from './components/Nav/Nav.jsx';
 import NavItem from './components/Nav/NavItem/NavItem.jsx';
 import MainContent from './components/MainContent/MainContent.jsx';
 import Title from './components/MainContent/Title/Title.jsx';
-
+// Import "widgets"
 import LogWeight from './components/LogWeightWidget/LogWeightWidget.jsx';
-
-// Use Skeleton styling boilerplate
-import './shared_styles/skeleton.less'
 
 const Visualize = () => (
     <MainContent>
@@ -50,10 +50,12 @@ class App extends React.Component {
   }
 }
 
+//TODO: Look into way to cache state upon component unmount 
+//      so fewer server calls are made
 render((
   <Router history = {hashHistory}>
     <Route path = "/" component = {App}>
-      <IndexRoute component = {LogWeight}/>
+      <IndexRoute component = {()=>(<LogWeight/>)}/>
       <Route path = "visualize" component = {Visualize}/>
     </Route>
   </Router>

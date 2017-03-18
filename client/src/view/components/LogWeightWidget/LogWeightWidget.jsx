@@ -20,14 +20,14 @@ export default class LogWeight extends React.Component {
   }
   
   getWeek(date) {
-  const myHeaders = {
-    "Content-Type":'application/json'
-  };
-  return fetch('/weight/query',{
-    method:'POST',
-    headers: myHeaders,
-    body: JSON.stringify({time:date})
-  });
+    const myHeaders = {
+      "Content-Type":'application/json'
+    };
+    return fetch('/weight/query',{
+      method:'POST',
+      headers: myHeaders,
+      body: JSON.stringify({time:date})
+    });
   }
   
   setNewState(date) {
@@ -65,15 +65,15 @@ export default class LogWeight extends React.Component {
   }
   
   renderRows(records) {
-  const rows = [];
-  for (let i = 0; i < records.length; i++) {
-    rows.push(
-      <tr key={i}>
-        <td>{moment(records[i].time).local().format('M/D')}</td>
-        <td>{records[i].weight ? records[i].weight.toFixed(1) : null}</td>
-      </tr>);
-  }  
-  return rows;
+    const rows = [];
+    for (let i = 0; i < records.length; i++) {
+      rows.push(
+        <tr key={i}>
+          <td>{moment(records[i].time).local().format('M/D')}</td>
+          <td>{records[i].weight ? records[i].weight.toFixed(1) : null}</td>
+        </tr>);
+    }  
+    return rows;
   }
   
   getRecordByDate(date) {
@@ -107,18 +107,20 @@ export default class LogWeight extends React.Component {
       <MainContent>
         <Title>Weight Log</Title>
         <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} onSubmit={this.submitWeight}/>
-        <div>Weekly Average: { this.average(records.filter((record) => "weight" in record)) }</div>
-        <table className = "u-full-width weight-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Weight</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderRows(records)}
-          </tbody>
-        </table>
+        <div className = "u-center-container">Weekly Average: {this.average(records.filter((record) => "weight" in record))}</div>
+        <div className = "eight columns u-center-container">
+          <table className = "u-full-width weight-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderRows(records)}
+            </tbody>
+          </table>
+        </div>
       </MainContent>
     );
   }
