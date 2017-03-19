@@ -12,7 +12,12 @@ export default class LogWeight extends React.Component {
       edit: (this.props.inputWeight != "")
     }
     
-    this.handleChangeDate = this.props.onDateSelect;
+    this.handleChangeDate = (date) => {
+      this.props.onDateSelect(date);
+      this.setState({
+        edit:false
+      });
+    }
     this.handleChangeInput = this.props.onInput;
     this.handleSubmit = () => {
       this.props.onSubmit()
@@ -29,9 +34,7 @@ export default class LogWeight extends React.Component {
   }
   
   hideInput() {
-    return this.props.inputWeight != "" && 
-      this.props.inputWeight != null &&
-      this.props.inputWeight != undefined &&
+    return this.props.hasRecord &&
       !this.state.edit;
   }
   
@@ -43,9 +46,9 @@ export default class LogWeight extends React.Component {
           <DatePicker id="datepicker" selected={this.props.selectedDate} onChange={this.handleChangeDate}/>
         </div>
         {
-          (this.hideInput()) ?
-            <EditButton onClick={this.handleEdit.bind(this)}/> :
-            <SubmitForm inputWeight={this.props.inputWeight} handleChangeInput={this.handleChangeInput} handleSubmit={this.handleSubmit}/>
+          this.hideInput()
+            ? <EditButton onClick={this.handleEdit.bind(this)}/> 
+            : <SubmitForm inputWeight={this.props.inputWeight} handleChangeInput={this.handleChangeInput} handleSubmit={this.handleSubmit}/>
         }
       </div>
     );
@@ -64,7 +67,7 @@ function SubmitForm(props) {
 
 function EditButton(props) {
   return (
-    <div className="six clumns">
+    <div className="six columns">
       <label>Click to edit:</label>
       <input className="button-primary button-medium weight-submit" type="submit" value="Edit" onClick={props.onClick}/>
     </div>

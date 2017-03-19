@@ -534,12 +534,6 @@ button,
 .button {
   margin-bottom: 1rem;
 }
-input,
-textarea,
-select,
-fieldset {
-  margin-bottom: 1.5rem;
-}
 pre,
 blockquote,
 dl,
@@ -682,7 +676,7 @@ there.
   background-color: #f8f8f8;
   height: inherit;
   width: 24rem;
-  position: absolute;
+  float: left;
   border-right: 1px solid #e7e7e7;
   overflow: scroll;
 }
@@ -739,7 +733,6 @@ there.
   border-bottom: solid 1px #e7e7e7;
 }
 .main-content-container {
-  margin-left: 24rem;
   padding: 0 2rem;
   height: inherit;
   box-sizing: border-box;

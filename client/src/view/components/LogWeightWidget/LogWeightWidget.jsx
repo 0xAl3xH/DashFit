@@ -42,7 +42,8 @@ export default class LogWeight extends React.Component {
   
   handleChangeDate(date) {
     this.setState({
-      selectedDate: date
+      selectedDate: date,
+      curWeight: ''
     });
     this.setNewState(date);
   }
@@ -102,11 +103,10 @@ export default class LogWeight extends React.Component {
   render () {
     
     const records = this.state.weightRecords;
-    
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
-        <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} onSubmit={this.submitWeight}/>
+        <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} hasRecord={this.getRecordByDate(moment(this.state.selectedDate)).weight != undefined} onSubmit={this.submitWeight}/>
         <div className = "u-center-container">Weekly Average: {this.average(records.filter((record) => "weight" in record))}</div>
         <div className = "eight columns u-center-container">
           <table className = "u-full-width weight-table">
