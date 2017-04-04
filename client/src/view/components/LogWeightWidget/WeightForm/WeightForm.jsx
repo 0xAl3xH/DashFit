@@ -3,8 +3,11 @@ import './WeightForm.less';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.less';
 
-export default class LogWeight extends React.Component {
-  
+/**
+* The component with which users input his/her weight, 
+* select desired date, edit and submit inputted weight.
+**/
+export default class WeightForm extends React.Component {
   constructor(props) {
     super(props);
     

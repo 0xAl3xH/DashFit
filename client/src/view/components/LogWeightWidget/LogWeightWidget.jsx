@@ -6,6 +6,15 @@ import MainContent from '../MainContent/MainContent.jsx';
 import Title from '../MainContent/Title/Title.jsx';
 import WeightForm from './WeightForm/WeightForm.jsx';
 
+/**
+* Widget which facilitates taking client inputs for weight information 
+* and submits it to the sever. Additionally, it also gets corresponding
+* weight data from the server when the client requests it. All of the 
+* AJAX calls for logging weight should be made here.
+*
+* Displays weight for the week of the selected day. A week in this 
+* context is defined as Tuesday to Monday.
+**/
 export default class LogWeight extends React.Component {
   constructor(props) {
     super(props);
@@ -19,6 +28,11 @@ export default class LogWeight extends React.Component {
     this.submitWeight = this.submitWeight.bind(this);
   }
   
+  /**
+  * @param date a Date or Moment object
+  * Fetches the weekly weight data from the server given the 
+  * date. 
+  **/
   getWeek(date) {
     const myHeaders = {
       "Content-Type":'application/json'
@@ -30,12 +44,17 @@ export default class LogWeight extends React.Component {
     });
   }
   
+  /**
+  * @param date a Date or Moment object
+  * Gets the weekly weight data then updates the corresponding state
+  **/
   setNewState(date) {
     this.getWeek(date).then(res =>{
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
-      const cur_weight = this.getRecordByDate(moment(this.state.selectedDate)).weight
+      let record = this.getRecordByDate(moment(this.state.selectedDate));
+      const cur_weight = record ? record.weight : null;
       this.setState({curWeight: cur_weight ? cur_weight : ""});
     });
   }
@@ -57,6 +76,11 @@ export default class LogWeight extends React.Component {
     this.setNewState(this.state.selectedDate);
   }
   
+  /**
+  * @param records an array of weight records
+  * Returns the average of the array of weight records,
+  * if there are no items in the array, returns null
+  **/
   average(records) {
     if (!records.length) return null;
     const weightsSum = records.reduce((a, b) => ({weight: a.weight + b.weight})).weight;
@@ -64,7 +88,7 @@ export default class LogWeight extends React.Component {
     average = (Math.round(average * 10) / 10).toFixed(1);
     return average
   }
-  
+
   renderRows(records) {
     const rows = [];
     for (let i = 0; i < records.length; i++) {
@@ -77,9 +101,14 @@ export default class LogWeight extends React.Component {
     return rows;
   }
   
+  /**
+  * @param date a Date or Moment object
+  * Given a date, find a record currently stored in widget state 
+  * that matches returns undefined if not found.
+  **/ 
   getRecordByDate(date) {
     const weight = this.state.weightRecords.filter((record) => date.isSame(record.time,'day'));
-    return weight[0] != null ? weight[0] : {weight:null};
+    return weight.pop();
   }
   
   submitWeight() {
@@ -103,10 +132,11 @@ export default class LogWeight extends React.Component {
   render () {
     
     const records = this.state.weightRecords;
+    const todayRecord = this.getRecordByDate(moment(this.state.selectedDate));
     return ( 
       <MainContent>
         <Title>Weight Log</Title>
-        <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} hasRecord={this.getRecordByDate(moment(this.state.selectedDate)).weight != undefined} onSubmit={this.submitWeight}/>
+        <WeightForm selectedDate={this.state.selectedDate} onDateSelect={this.handleChangeDate} inputWeight={this.state.curWeight} onInput={this.handleChangeInput} hasRecord={todayRecord ? todayRecord.weight : todayRecord} onSubmit={this.submitWeight}/>
         <div className = "u-center-container">Weekly Average: {this.average(records.filter((record) => "weight" in record))}</div>
         <div className = "eight columns u-center-container">
           <table className = "u-full-width weight-table">
