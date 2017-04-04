@@ -6,15 +6,15 @@ import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router';
 import './shared_styles/skeleton.less'
 
 // Import React components
-import HelloWorld from './components/Test/HelloWorld';
-import Header from './components/Header/Header';
-import Nav from './components/Nav/Nav';
-import NavItem from './components/Nav/NavItem/NavItem';
-import MainContent from './components/MainContent/MainContent';
-import Title from './components/MainContent/Title/Title';
+import HelloWorld from 'components/Test/HelloWorld';
+import Header from 'components/Header/Header';
+import Nav from 'components/Nav/Nav';
+import NavItem from 'components/Nav/NavItem/NavItem';
+import MainContent from 'components/MainContent/MainContent';
+import Title from 'components/MainContent/Title/Title';
 
 // Import "widgets"
-import LogWeight from './components/LogWeightWidget/LogWeightWidget';
+import LogWeight from 'components/LogWeightWidget/LogWeightWidget';
 
 const Visualize = () => (
     <MainContent>

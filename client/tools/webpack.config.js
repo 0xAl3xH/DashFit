@@ -18,7 +18,7 @@ var config = {
     ],
     extensions: ['.js', '.jsx'],
     alias: {
-      
+      components : path.resolve(__dirname, '../src/view/components')
     }
   },
   entry: APP_DIR + '/index.jsx',
