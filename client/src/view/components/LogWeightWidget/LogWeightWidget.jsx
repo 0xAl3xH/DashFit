@@ -2,9 +2,9 @@
 import React from 'react';
 import './LogWeightWidget.less';
 import moment from 'moment';
-import MainContent from '../MainContent/MainContent.jsx';
-import Title from '../MainContent/Title/Title.jsx';
-import WeightForm from './WeightForm/WeightForm.jsx';
+import MainContent from '../MainContent/MainContent';
+import Title from '../MainContent/Title/Title';
+import WeightForm from './WeightForm/WeightForm';
 
 /**
 * Widget which facilitates taking client inputs for weight information 

@@ -16,6 +16,10 @@ var config = {
     modules: [
       path.resolve(__dirname,'node_modules')
     ],
+    extensions: ['.js', '.jsx'],
+    alias: {
+      
+    }
   },
   entry: APP_DIR + '/index.jsx',
   output: {
