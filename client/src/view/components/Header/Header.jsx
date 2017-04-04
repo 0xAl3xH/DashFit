@@ -1,5 +1,4 @@
 import React from 'react';
-import './Header.less';
 
 /**
 * Header meant to take a title within the bounding tags

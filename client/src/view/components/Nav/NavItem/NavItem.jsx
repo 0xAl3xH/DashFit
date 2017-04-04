@@ -1,5 +1,4 @@
 import React from 'react';
-import './NavItem.less';
 import {Link} from 'react-router';
 
 export default class NavItem extends React.Component {

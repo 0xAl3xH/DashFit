@@ -11,7 +11,7 @@ const extractLESS = new ExtractTextPlugin('styles.css');
 
 var config = {
   resolve: {
-    // Since our build tools and modules are in DashFit/tools and not DashFit (root dir),
+    // Since our build tools and modules are not in the root dir relative to entry,
     // add the directory to be resolved so WebPack finds it
     modules: [
       path.resolve(__dirname,'node_modules')
@@ -46,6 +46,13 @@ var config = {
           test: /\.less$/,
           use: extractLESS.extract(['css-loader','less-loader']),
       },
+      {
+        test: /\.jsx?/,
+        loader : './styling-loader.js',
+        query: {
+          ignoreNodeModules: true
+        }
+      }
     ]
   },
   plugins: [

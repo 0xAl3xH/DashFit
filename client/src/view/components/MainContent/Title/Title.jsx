@@ -1,5 +1,4 @@
 import React from 'react';
-import './Title.less';
 
 export default class Title extends React.Component {
   render () {

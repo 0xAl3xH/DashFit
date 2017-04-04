@@ -1,5 +1,4 @@
 import React from 'react';
-import './WeightForm.less';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.less';
 

@@ -1,6 +1,5 @@
 //TODO: Look into webpack aliasing for relative imports to avoid ../../../........hell
 import React from 'react';
-import './LogWeightWidget.less';
 import moment from 'moment';
 import MainContent from '../MainContent/MainContent';
 import Title from '../MainContent/Title/Title';
