@@ -31,11 +31,11 @@ module.exports = (function (server_mg, mg_URI) {
   * If a record exists with the same date, update it with the new weight info.
   **/
   function addRecord(jsonItem, res) {
-    const momentTime = moment(new Date(jsonItem.time)).utc(),
+    const momentTime = moment(new Date(jsonItem.time)),
           query = {
             time: {
-              $gte: momentTime.clone().startOf('day').toDate(),
-              $lt: momentTime.clone().endOf('day').toDate()
+              $gte: momentTime.clone().startOf('day').utc().toDate(),
+              $lt: momentTime.clone().endOf('day').utc().toDate()
             }
           },
           update = {
@@ -43,7 +43,7 @@ module.exports = (function (server_mg, mg_URI) {
             $set:{weight: jsonItem.weight}
           },
           options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
-    
+    console.log(momentTime);
     weightRecord.findOneAndUpdate(query, update, options, function(err, result){
       if (err) return console.log(err);
       console.log("Saved/modified:" + result);
