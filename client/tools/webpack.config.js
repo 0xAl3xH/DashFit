@@ -18,7 +18,8 @@ var config = {
     ],
     extensions: ['.js', '.jsx'],
     alias: {
-      components : path.resolve(__dirname, '../src/view/components')
+      components: path.resolve(__dirname, '../src/view/components'),
+      shared_styles: path.resolve(__dirname,'../src/view/shared_styles')  //Prepend import with ~ for less-loader e.g ~shared_styles
     }
   },
   entry: APP_DIR + '/index.jsx',
