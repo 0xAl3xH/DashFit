@@ -1,3 +1,10 @@
+/**
+* Module that is responsible for handling transaction for logging 
+* user weight. 
+* @param server_mg an instance of Mongoose
+* @param mg_URI URI of the MongoDB 
+**/
+
 module.exports = (function (server_mg, mg_URI) {
   
   const mg = server_mg,
@@ -6,44 +13,46 @@ module.exports = (function (server_mg, mg_URI) {
         router = express.Router(),
         moment = require('moment'),
         options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
-                  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };   
+                  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } },
+        weightRecord = mg.model("weight_record", {
+          time: Date,
+          weight: Number 
+        });
   
   mg.connect(mg_URI,options);
   
-  const weightRecord = mg.model("weight_record", {
-    time: Date,
-    weight: Number 
-  });
-  
   router.post('/query', function(req, res){
     const time = moment(new Date(req.body.time));
-    console.log(time);
+    console.log("Requesting weight record at:  " + time);
     returnRecord(time,res);
   });
   
   router.post('/submit', function(req, res){
-    console.log(req.body);
+    console.log("Submitting weight record: " + req.body);
     addRecord(req.body,res);
   });
   
   /**
-  * Takes a json item representing a weight record and adds it to the db.
-  * If a record exists with the same date, update it with the new weight info.
+  * Adds a record to the db. If a record exists in the db with
+  * the same date, update it with the new weight info.
+  * @param record an object representing a weight
+  * @param res the response object for the request
   **/
-  function addRecord(jsonItem, res) {
-    const momentTime = moment(new Date(jsonItem.time)),
+  function addRecord(record, res) {
+    const momentTime = moment(new Date(record.time)),
           query = {
             time: {
+              //@TODO figure out if the usage of .utc() is necessary 
               $gte: momentTime.clone().startOf('day').utc().toDate(),
               $lt: momentTime.clone().endOf('day').utc().toDate()
             }
           },
           update = {
-            $setOnInsert:{time:jsonItem.time}, 
-            $set:{weight: jsonItem.weight}
+            $setOnInsert:{time:record.time}, 
+            $set:{weight: record.weight}
           },
           options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
-    console.log(momentTime);
+    console.log("Adding/Updating record for: " + momentTime);
     weightRecord.findOneAndUpdate(query, update, options, function(err, result){
       if (err) return console.log(err);
       console.log("Saved/modified:" + result);
@@ -51,6 +60,11 @@ module.exports = (function (server_mg, mg_URI) {
     });
   }
   
+  /**
+  * Returns the records for the "week" given any day of the week
+  * @param time a Moment instance
+  * @param res the response object for the request
+  **/
   function returnRecord(time, res) {
     let bounds = getWeek(time),
         startWeek = bounds[0],
@@ -97,6 +111,7 @@ module.exports = (function (server_mg, mg_URI) {
 * Given a date of the week, return an array
 * containing the [startDate, endDate] of the
 * week
+* @param date a Moment instance
 */
 
 function getWeek(date) {
