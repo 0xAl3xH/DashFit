@@ -23,15 +23,25 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       http = require('http').Server(app),
       router = express.Router(),
-      mg = require('mongoose'),
+      mg = require('mongoose').connect(config.mongoURI), 
+      conn = mg.connection,
       morgan = require('morgan'),
       passport = require('passport'),
-      logWeight = require('./modules/log-weight.js')(mg,config.mongoURI);
+      session = require('express-session'),
+      logWeight = require('./modules/log-weight.js')(mg);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use('/weight',logWeight);
 app.use(express.static(__dirname + '/../client/build'));
 
-console.log("Server started, listening on port 3000");
-http.listen(3000);
+// required for passport
+app.use(session({ secret: '2lqozlZKSJPujynYxWnQGEamJszfbeXR' }));
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+// wait for db connection to be established before starting server
+conn.once('open', function(){
+  console.log("Server started, listening on port 3000");
+  http.listen(3000);
+});

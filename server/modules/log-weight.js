@@ -1,11 +1,10 @@
 /**
 * Module that is responsible for handling transaction for logging 
 * user weight. 
-* @param server_mg an instance of Mongoose
-* @param mg_URI URI of the MongoDB 
+* @param server_mg an instance of Mongoose which has been connected
 **/
 
-module.exports = (function (server_mg, mg_URI) {
+module.exports = (function (server_mg) {
   
   const mg = server_mg,
         express = require('express'),
@@ -18,8 +17,6 @@ module.exports = (function (server_mg, mg_URI) {
           time: Date,
           weight: Number 
         });
-  
-  mg.connect(mg_URI,options);
   
   router.post('/query', function(req, res){
     const time = moment(new Date(req.body.time));
