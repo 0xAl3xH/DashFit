@@ -1,8 +1,8 @@
-var fs = require('fs');
-var configFields = JSON.parse(fs.readFileSync("config_fields.json", "utf8"));
-var configFileName = "config.json";
-var config = JSON.parse(fs.readFileSync(configFileName, "utf8"));
-var configErrors = false;
+const fs = require('fs'),
+      configFields = JSON.parse(fs.readFileSync("config_fields.json", "utf8")),
+      configFileName = "config.json",
+      config = JSON.parse(fs.readFileSync(configFileName, "utf8")),
+      configErrors = false;
 for (var field in configFields) {
     if (!(field in config)) {
         var value = configFields[field];
@@ -18,15 +18,15 @@ if (configErrors) {
     process.exit(1);
 }
 
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var http = require('http').Server(app);
-var router = express.Router();
-var mg = require('mongoose');
-var morgan = require('morgan');
-var passport = require('passport');
-var logWeight = require('./modules/log-weight.js')(mg,config.mongoURI);
+const express = require('express'),
+      app = express(),
+      bodyParser = require('body-parser'),
+      http = require('http').Server(app),
+      router = express.Router(),
+      mg = require('mongoose'),
+      morgan = require('morgan'),
+      passport = require('passport'),
+      logWeight = require('./modules/log-weight.js')(mg,config.mongoURI);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
