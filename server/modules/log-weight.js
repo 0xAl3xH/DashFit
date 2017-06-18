@@ -23,12 +23,10 @@ module.exports = (function (server_mg, mg_URI) {
   
   router.post('/query', function(req, res){
     const time = moment(new Date(req.body.time));
-    console.log("Requesting weight record at:  " + time);
     returnRecord(time,res);
   });
   
   router.post('/submit', function(req, res){
-    console.log("Submitting weight record: " + req.body);
     addRecord(req.body,res);
   });
   
@@ -52,10 +50,8 @@ module.exports = (function (server_mg, mg_URI) {
             $set:{weight: record.weight}
           },
           options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
-    console.log("Adding/Updating record for: " + momentTime);
     weightRecord.findOneAndUpdate(query, update, options, function(err, result){
       if (err) return console.log(err);
-      console.log("Saved/modified:" + result);
       res.status(200).json(result);
     });
   }
@@ -69,7 +65,6 @@ module.exports = (function (server_mg, mg_URI) {
     let bounds = getWeek(time),
         startWeek = bounds[0],
         endWeek = bounds[1];
-    console.log(bounds);
     
     weightRecord.find({
       time: {
@@ -79,11 +74,9 @@ module.exports = (function (server_mg, mg_URI) {
     }, function(err, records) {
       if (err) return console.log(err);
       const recordsMap = {};
-      console.log(records);
       records.map(function(record) {
         recordsMap[moment(record.time).startOf('day').utc()] = [record.weight, record._id, record.time];
       });
-      console.log(recordsMap);
       const start = moment(startWeek).startOf('day').utc();
       records = []
       for (var i = 0; i < 7; i++) {
@@ -100,7 +93,6 @@ module.exports = (function (server_mg, mg_URI) {
           });
         }
       }
-      console.log(records);
       res.json(records);
     });  
   }  
