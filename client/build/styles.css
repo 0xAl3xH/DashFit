@@ -762,6 +762,29 @@ there.
   padding-top: 1.618rem;
   border-bottom: solid 1px #e7e7e7;
 }
+/** 
+* Useful constants
+**/
+/**
+* Font sizes
+**/
+/**
+* Width and height
+**/
+#login-form {
+  text-align: center;
+}
+.status-text {
+  margin-bottom: 4.854em;
+}
+.username-container,
+.password-container {
+  width: 15em;
+  margin: 0 auto;
+}
+.user-submit {
+  margin: 1em;
+}
 /**
 * Colors
 **/

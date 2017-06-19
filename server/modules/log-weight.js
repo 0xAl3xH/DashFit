@@ -4,7 +4,7 @@
 * @param server_mg an instance of Mongoose which has been connected
 **/
 
-module.exports = (function (server_mg) {
+module.exports = (function (server_mg, server_passport) {
   
   const mg = server_mg,
         express = require('express'),
@@ -107,4 +107,13 @@ function getWeek(date) {
   var start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days');
   var end = start.clone().add(6, 'days');
   return [start.startOf('day').utc().toDate(), end.endOf('day').utc().toDate()];
+}
+
+function isLoggedIn(req, res, next) {
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    res.redirect('/');
 }

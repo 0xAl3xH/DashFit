@@ -28,17 +28,17 @@ const express = require('express'),
       morgan = require('morgan'),
       passport = require('passport'),
       session = require('express-session'),
-      logWeight = require('./modules/log-weight.js')(mg);
+      logWeight = require('./modules/log-weight.js')(mg, passport);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use('/weight',logWeight);
 app.use(express.static(__dirname + '/../client/build'));
 
-// required for passport
+// requires for user authentication
 app.use(session({ secret: '2lqozlZKSJPujynYxWnQGEamJszfbeXR' }));
 app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
+app.use(passport.session());
 
 // wait for db connection to be established before starting server
 conn.once('open', function(){
