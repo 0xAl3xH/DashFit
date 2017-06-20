@@ -7,9 +7,7 @@
 module.exports = (function (server_mg, server_passport) {
   
   const mg = server_mg,
-        express = require('express'),
-        app = express(),
-        router = express.Router(),
+        router = require('express').Router(),
         moment = require('moment'),
         options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
                   replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } },
@@ -109,10 +107,14 @@ function getWeek(date) {
   return [start.startOf('day').utc().toDate(), end.endOf('day').utc().toDate()];
 }
 
+
 function isLoggedIn(req, res, next) {
+    console.log(req.isAuthenticated());
     // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated())
+    if (req.isAuthenticated()) {
+      console.log("legit user");
         return next();
+    }
 
     // if they aren't redirect them to the home page
     res.redirect('/');

@@ -12,7 +12,8 @@ import Nav from 'components/Nav/Nav';
 import NavItem from 'components/Nav/NavItem/NavItem';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
-import LogInForm from 'components/LogInForm/LogInForm'; 
+import LogInForm from 'components/LogInForm/LogInForm';
+import SquareLoader from 'components/SquareLoader/SquareLoader';
 
 // Import "widgets"
 import LogWeight from 'components/LogWeightWidget/LogWeightWidget';
@@ -29,9 +30,19 @@ class App extends React.Component {
     super();  
     this.state=({
       offset: 0,
-      loggedIn: false
+      loggedIn: false,
+      fetching: true
     });
+    this.headerOffsetHandler = this.headerOffsetHandler.bind(this);
     this.loggedInHandler = this.loggedInHandler.bind(this);
+    this.fetchHandler = this.fetchHandler.bind(this);
+  }
+  
+  componentDidMount() {
+    getAuthenticationStatus().then(loggedOn =>{
+      this.loggedInHandler(loggedOn);
+      this.fetchHandler(false);
+    });
   }
   
   // Offset body from header
@@ -43,7 +54,18 @@ class App extends React.Component {
     this.setState({loggedIn:logged});
   }
   
+  fetchHandler(is_fetching) {
+    this.setState({fetching: is_fetching});
+  }
+  
   renderDashBoard() {
+    if (this.state.fetching) {
+      return (
+        <div>
+        <SquareLoader offset={this.state.offset}></SquareLoader>
+        </div>
+      );
+    }
     if (this.state.loggedIn) {
       return (
         <div style={{height:window.innerHeight-this.state.offset}}>
@@ -56,21 +78,30 @@ class App extends React.Component {
       );
     } else {
       return (
-        <LogInForm checkLoggedIn={this.loggedInHandler}/>
-      )
+        <LogInForm checkLoggedIn={this.loggedInHandler} checkFetch={this.fetchHandler}/>
+      );
     }
   }
   
   render () {
     return (
       <div>
-        <Header className="header" headerOffsetFunc={this.headerOffsetHandler.bind(this)}> 
+        <Header className="header" headerOffsetFunc={this.headerOffsetHandler}> 
           <Link to = "/" className = "title">DashFit </Link>
         </Header>
         {this.renderDashBoard()}
       </div>
     );
   }
+}
+
+function getAuthenticationStatus() {    
+  return fetch('/login',{
+    method:'GET',
+    credentials: 'include'
+  }).then(res =>{
+    return res.json();
+  });  
 }
 
 //TODO: Look into way to cache state upon component unmount 

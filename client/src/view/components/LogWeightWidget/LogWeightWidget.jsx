@@ -39,6 +39,7 @@ export default class LogWeight extends React.Component {
     return fetch('/weight/query',{
       method:'POST',
       headers: myHeaders,
+      credentials: 'include',
       body: JSON.stringify({time:date})
     });
   }
@@ -118,6 +119,7 @@ export default class LogWeight extends React.Component {
     return fetch('/weight/submit',{
       method:'POST',
       headers: myHeaders,
+      credentials: 'include',
       body: JSON.stringify({
         time:this.state.selectedDate,
         weight: this.state.curWeight

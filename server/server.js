@@ -20,28 +20,47 @@ if (configErrors) {
 
 const express = require('express'),
       app = express(),
+      cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
       http = require('http').Server(app),
       router = express.Router(),
-      mg = require('mongoose').connect(config.mongoURI), 
+      mg = require('mongoose').connect(config.mongoURI,config.mogoOptions), 
       conn = mg.connection,
       morgan = require('morgan'),
       passport = require('passport'),
       session = require('express-session'),
-      logWeight = require('./modules/log-weight.js')(mg, passport);
+      logWeight = require('./modules/log-weight.js')(mg, passport),
+      authenticate = require('./modules/authenticate.js')(mg, passport);
+
+require('./modules/config/passport.js')(passport);
 
 app.use(morgan('dev'));
+app.use(cookieParser(config.sessionSecret));
 app.use(bodyParser.json());
-app.use('/weight',logWeight);
 app.use(express.static(__dirname + '/../client/build'));
 
-// requires for user authentication
-app.use(session({ secret: '2lqozlZKSJPujynYxWnQGEamJszfbeXR' }));
+// Passport settings
+app.use(session({ secret: config.sessionSecret, 
+                  resave: false, 
+                  saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(authenticate);
+app.use('/weight', isLoggedIn, logWeight);
 
 // wait for db connection to be established before starting server
 conn.once('open', function(){
   console.log("Server started, listening on port 3000");
   http.listen(3000);
 });
+
+function isLoggedIn(req, res, next) {
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    // if they aren't redirect them to the home page
+    res.redirect('/');
+}
