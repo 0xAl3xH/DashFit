@@ -107,7 +107,7 @@ export default class LogWeight extends React.Component {
   * that matches returns undefined if not found.
   **/ 
   getRecordByDate(date) {
-    const weight = this.state.weightRecords.filter((record) => date.isSame(record.time,'day'));
+    const weight = this.state.weightRecords.filter((record) => {console.log(date,moment(record.time),date.isSame(moment(record.time),'day'));return date.isSame(record.time,'day')});
     return weight.pop();
   }
   
