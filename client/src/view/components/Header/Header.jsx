@@ -34,7 +34,7 @@ export default class Header extends React.Component {
   render () {
     return ( 
       <div className= "header" ref="header">
-        <div className = "header-title">{this.props.children}</div>
+        {this.props.children}
       </div>
     );
   }

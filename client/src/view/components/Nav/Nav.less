@@ -7,4 +7,13 @@
   float:left;
   border-right: 1px solid @dark_gray;
   overflow: scroll;
+  z-index: 2;
+}
+
+.nav-container.mobile {
+  float:none;
+  height: 0;
+  width: 100%;
+  position: absolute;
+  transition: height 500ms;
 }

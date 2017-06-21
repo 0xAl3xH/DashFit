@@ -637,6 +637,7 @@ there.
   border-bottom: solid 1px #e7e7e7;
 }
 .header {
+  height: 48px;
   background-color: #f8f8f8;
   color: #777;
   border-bottom: solid 1px #e7e7e7;
@@ -645,13 +646,11 @@ there.
   font-size: 3rem;
   display: inline-block;
   padding: 0 0.809rem;
-}
-.header-title a {
   text-decoration: none;
   color: #777;
 }
-.header-title a:hover,
-.header-title a:active {
+.header-title:hover,
+.header-title:active {
   color: #777;
 }
 /**
@@ -679,6 +678,14 @@ there.
   float: left;
   border-right: 1px solid #e7e7e7;
   overflow: scroll;
+  z-index: 2;
+}
+.nav-container.mobile {
+  float: none;
+  height: 0;
+  width: 100%;
+  position: absolute;
+  transition: height 500ms;
 }
 /**
 * Colors
@@ -892,6 +899,32 @@ there.
     transform: perspective(140px) rotateY(180deg);
     opacity: 0;
   }
+}
+/**
+* Colors
+**/
+/**
+* Text color
+**/
+/** 
+* Useful constants
+**/
+/**
+* Font sizes
+**/
+/**
+* Width and height
+**/
+.border_bottom {
+  border-bottom: solid 1px #e7e7e7;
+}
+.icon {
+  float: right;
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: 3.236rem;
+  padding: 8px;
+  display: inline-block;
 }
 /**
 * Colors

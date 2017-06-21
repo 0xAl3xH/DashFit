@@ -1,6 +1,7 @@
 @import '~shared_styles/shared_imports.less';
 
 .header {
+  height: 48px;
   background-color: @gray;
   color: @text_gray;
   .border_bottom;
@@ -10,11 +11,9 @@
   font-size: @font_title;
   display: inline-block;
   padding: 0 0.5rem * @golden;
-  a {
-    text-decoration: none;
+  text-decoration: none;
+  color: @text_gray;
+  &:hover,&:active {
     color: @text_gray;
-    &:hover,&:active {
-      color: @text_gray;
-    }
   }
 }
