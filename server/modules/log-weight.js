@@ -18,7 +18,6 @@ module.exports = (function (server_mg, server_passport) {
   
   router.post('/query', function(req, res){
     const time = moment.parseZone(req.body.time);
-    //const time = moment(req.body.time);
     console.log(req.body.time,time);
     returnRecord(time,res);
   });
