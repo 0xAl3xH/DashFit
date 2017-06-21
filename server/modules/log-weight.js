@@ -17,7 +17,9 @@ module.exports = (function (server_mg, server_passport) {
         });
   
   router.post('/query', function(req, res){
-    const time = moment(new Date(req.body.time));
+    const time = moment.parseZone(req.body.time);
+    //const time = moment(req.body.time);
+    console.log(req.body.time,time);
     returnRecord(time,res);
   });
   
@@ -32,7 +34,7 @@ module.exports = (function (server_mg, server_passport) {
   * @param res the response object for the request
   **/
   function addRecord(record, res) {
-    const momentTime = moment(new Date(record.time)),
+    const momentTime = moment.parseZone(record.time),
           query = {
             time: {
               //@TODO figure out if the usage of .utc() is necessary 
@@ -41,7 +43,7 @@ module.exports = (function (server_mg, server_passport) {
             }
           },
           update = {
-            $setOnInsert:{time:record.time}, 
+            $setOnInsert:{time:momentTime.toDate()}, 
             $set:{weight: record.weight}
           },
           options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
@@ -59,23 +61,25 @@ module.exports = (function (server_mg, server_passport) {
   function returnRecord(time, res) {
     let bounds = getWeek(time),
         startWeek = bounds[0],
-        endWeek = bounds[1];
+        endWeek = bounds[1],
+        offset = bounds[0].utcOffset();
     
+    //TODO: Find more efficient way to do this
     weightRecord.find({
       time: {
-        $gte: startWeek,
-        $lt: endWeek
+        $gte: startWeek.clone().startOf('day').utc().toDate(),
+        $lt: endWeek.clone().endOf('day').utc().toDate()
       }
     }, function(err, records) {
       if (err) return console.log(err);
       const recordsMap = {};
       records.map(function(record) {
-        recordsMap[moment(record.time).startOf('day').utc()] = [record.weight, record._id, record.time];
+        recordsMap[moment(record.time).utcOffset(offset).startOf('day')] = [record.weight, record._id, record.time];
       });
-      const start = moment(startWeek).startOf('day').utc();
+      const start = startWeek.clone().startOf('day');
       records = []
       for (var i = 0; i < 7; i++) {
-        var date = moment(start).clone().add(i, "d")
+        let date = start.clone().add(i, "d");
         if (date in recordsMap) {
           records.push({
             id: recordsMap[date][1],
@@ -88,6 +92,7 @@ module.exports = (function (server_mg, server_passport) {
           });
         }
       }
+      console.log(records);
       res.json(records);
     });  
   }  
@@ -97,14 +102,15 @@ module.exports = (function (server_mg, server_passport) {
 /**
 * Given a date of the week, return an array
 * containing the [startDate, endDate] of the
-* week
+* week, respecting the original time zone and 
+* format of the input
 * @param date a Moment instance
 */
 
 function getWeek(date) {
   var start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days');
   var end = start.clone().add(6, 'days');
-  return [start.startOf('day').utc().toDate(), end.endOf('day').utc().toDate()];
+  return [start, end];
 }
 
 

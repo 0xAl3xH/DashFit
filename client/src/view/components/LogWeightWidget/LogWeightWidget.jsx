@@ -4,7 +4,6 @@ import moment from 'moment';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
 import WeightForm from './WeightForm/WeightForm';
-
 /**
 * Widget which facilitates taking client inputs for weight information 
 * and submits it to the sever. Additionally, it also gets corresponding
@@ -40,7 +39,7 @@ export default class LogWeight extends React.Component {
       method:'POST',
       headers: myHeaders,
       credentials: 'include',
-      body: JSON.stringify({time:date})
+      body: JSON.stringify({time:moment(date).format()})
     });
   }
   
@@ -53,6 +52,9 @@ export default class LogWeight extends React.Component {
       return res.json();
     }).then(records => {
       this.setState({weightRecords:records});
+      //console.log("Time zone test:");
+      //console.log(this.state.selectedDate, moment());
+      console.log(records);
       let record = this.getRecordByDate(moment(this.state.selectedDate));
       const cur_weight = record ? record.weight : null;
       this.setState({curWeight: cur_weight ? cur_weight : ""});
@@ -107,7 +109,7 @@ export default class LogWeight extends React.Component {
   * that matches returns undefined if not found.
   **/ 
   getRecordByDate(date) {
-    const weight = this.state.weightRecords.filter((record) => {console.log(date,moment(record.time),date.isSame(moment(record.time),'day'));return date.isSame(record.time,'day')});
+    const weight = this.state.weightRecords.filter((record) => {return date.isSame(record.time,'day')});
     return weight.pop();
   }
   
@@ -121,7 +123,7 @@ export default class LogWeight extends React.Component {
       headers: myHeaders,
       credentials: 'include',
       body: JSON.stringify({
-        time:this.state.selectedDate,
+        time:this.state.selectedDate.format(),
         weight: this.state.curWeight
       })
     }).then(res =>{
