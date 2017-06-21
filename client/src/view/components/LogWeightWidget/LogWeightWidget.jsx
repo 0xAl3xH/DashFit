@@ -54,7 +54,6 @@ export default class LogWeight extends React.Component {
       this.setState({weightRecords:records});
       //console.log("Time zone test:");
       //console.log(this.state.selectedDate, moment());
-      console.log(records);
       let record = this.getRecordByDate(moment(this.state.selectedDate));
       const cur_weight = record ? record.weight : null;
       this.setState({curWeight: cur_weight ? cur_weight : ""});
