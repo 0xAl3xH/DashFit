@@ -41,7 +41,7 @@ class App extends React.Component {
   componentDidMount() {
     getAuthenticationStatus().then(loggedOn =>{
       this.loggedInHandler(loggedOn);
-      this.fetchHandler(false);
+      setTimeout(() => this.fetchHandler(false), 1500)
     });
   }
   
