@@ -45,7 +45,7 @@ export default class WeightForm extends React.Component {
       <div className="row weight-form">
         <div className = "six columns">
           <label htmlFor="datepicker">Select Date:</label>
-          <DatePicker id="datepicker" selected={this.props.selectedDate} onChange={this.handleChangeDate}/>
+          <DatePicker id="datepicker" selected={this.props.selectedDate} onChange={this.handleChangeDate} tetherConstraints={[]}/>
         </div>
         {
           this.hideInput()
