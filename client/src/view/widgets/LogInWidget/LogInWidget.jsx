@@ -3,7 +3,7 @@ import React from 'react';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
 
-export default class LogInForm extends React.Component {
+export default class LogInWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {username:"",
