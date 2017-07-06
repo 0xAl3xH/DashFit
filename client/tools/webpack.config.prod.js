@@ -6,10 +6,12 @@ const path = require('path');
 const APP_DIR = path.resolve(__dirname, '../src/view');
 const BUILD_DIR = path.resolve(__dirname, '../build');
 
+const CompressionPlugin = require('compression-webpack-plugin');
+
 //Plugin to turn LESS into static styles.css, stored in output path specified in config
 const extractLESS = new ExtractTextPlugin('styles.css');
 
-var config = {
+const config = {
   resolve: {
     // Since our build tools and modules are not in the root dir relative to entry,
     // add the directory to be resolved so WebPack finds it
@@ -65,7 +67,14 @@ var config = {
     }),
     new webpack.optimize.DedupePlugin(), //dedupe similar code 
     new webpack.optimize.UglifyJsPlugin(), //minify everything
-    new webpack.optimize.AggressiveMergingPlugin()//Merge chunks  
+    new webpack.optimize.AggressiveMergingPlugin(), //Merge chunks  
+    new CompressionPlugin({   
+      asset: "[path].gz[query]",
+      algorithm: "gzip",
+      test: /\.js$|\.css$|\.html$/,
+      threshold: 10240,
+      minRatio: 0.8
+    })
   ]
 }
 

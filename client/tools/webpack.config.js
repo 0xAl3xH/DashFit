@@ -9,7 +9,7 @@ const BUILD_DIR = path.resolve(__dirname, '../build');
 //Plugin to turn LESS into static styles.css, stored in output path specified in config
 const extractLESS = new ExtractTextPlugin('styles.css');
 
-var config = {
+const config = {
   resolve: {
     // Since our build tools and modules are not in the root dir relative to entry,
     // add the directory to be resolved so WebPack finds it
