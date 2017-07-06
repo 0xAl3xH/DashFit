@@ -29,6 +29,7 @@ const express = require('express'),
       morgan = require('morgan'),
       passport = require('passport'),
       session = require('express-session'),
+      expressStaticGzip = require("express-static-gzip"),
       logWeight = require('./modules/log-weight.js')(mg, passport),
       authenticate = require('./modules/authenticate.js')(mg, passport);
 
@@ -37,7 +38,7 @@ require('./modules/config/passport.js')(passport);
 app.use(morgan('dev'));
 app.use(cookieParser(config.sessionSecret));
 app.use(bodyParser.json());
-app.use(express.static(__dirname + '/../client/build'));
+app.use("/", expressStaticGzip(__dirname + '/../client/build'));
 
 // Passport settings
 app.use(session({ secret: config.sessionSecret, 
