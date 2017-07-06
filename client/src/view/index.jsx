@@ -13,12 +13,13 @@ import Nav from 'components/Nav/Nav';
 import NavItem from 'components/Nav/NavItem/NavItem';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
-import LogInForm from 'components/LogInForm/LogInForm';
 import SquareLoader from 'components/SquareLoader/SquareLoader';
 import Icon from 'components/Icon/Icon';
 
 // Import "widgets"
-import LogWeight from 'components/LogWeightWidget/LogWeightWidget';
+import LogIn from 'widgets/LogInWidget/LogInWidget';
+import LogWeight from 'widgets/LogWeightWidget/LogWeightWidget';
+
 
 // Default (desktop, tablet) and mobile setup
 const Desktop = ({ children }) => <Responsive minWidth={768} children={children} />;
@@ -104,7 +105,7 @@ class App extends React.Component {
       );
     } else {
       return (
-        <LogInForm checkLoggedIn={this.loggedInHandler} checkFetch={this.fetchHandler}/>
+        <LogIn checkLoggedIn={this.loggedInHandler} checkFetch={this.fetchHandler}/>
       );
     }
   }
