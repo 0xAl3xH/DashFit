@@ -27,19 +27,39 @@ export default class LogWeight extends React.Component {
   }
   
   /**
+  * Given a date of the week, return an array
+  * containing the [startDate, endDate] of the
+  * week, respecting the original time zone and 
+  * format of the input
+  * @param date a Moment instance
+  */
+
+  getWeekBounds(date) {
+    let start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days'),
+        end = start.clone().add(6, 'days');
+    return [start, end];
+  }
+  
+  /**
   * @param date a Date or Moment object
   * Fetches the weekly weight data from the server given the 
   * date. 
   **/
   getWeek(date) {
+    
     const myHeaders = {
       "Content-Type":'application/json'
-    };
+    },
+          bound = this.getWeekBounds(date);
+    
     return fetch('/weight/query',{
       method:'POST',
       headers: myHeaders,
       credentials: 'include',
-      body: JSON.stringify({time:moment(date).format()})
+      body: JSON.stringify({
+        start:moment(bound[0]).format(), 
+        end:moment(bound[1]).format()
+      })
     });
   }
   

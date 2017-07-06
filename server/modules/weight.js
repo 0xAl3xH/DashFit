@@ -9,17 +9,16 @@ module.exports = (function (server_mg, server_passport) {
   const mg = server_mg,
         router = require('express').Router(),
         moment = require('moment'),
-        options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } }, 
-                  replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } },
         weightRecord = mg.model("weight_record", {
           time: Date,
           weight: Number 
         });
   
   router.post('/query', function(req, res){
-    const time = moment.parseZone(req.body.time);
-    console.log(req.body.time,time);
-    returnRecord(time,res);
+    const start = moment.parseZone(req.body.start),
+          end = moment.parseZone(req.body.end);
+    console.log(start,end);
+    returnRecord(start,end,res);
   });
   
   router.post('/submit', function(req, res){
@@ -53,21 +52,22 @@ module.exports = (function (server_mg, server_passport) {
   }
   
   /**
-  * Returns the records for the "week" given any day of the week
-  * @param time a Moment instance
+  * Returns the records within the specified range of time
+  * by day. If a record does not exist on a particular day 
+  * the returned object will just be that date with no 
+  * other fields.
+  * @param start a moment instance
+  * @param end a moment instance 
   * @param res the response object for the request
   **/
-  function returnRecord(time, res) {
-    let bounds = getWeek(time),
-        startWeek = bounds[0],
-        endWeek = bounds[1],
-        offset = bounds[0].utcOffset();
+  function returnRecord(start, end, res) {
+    let offset = start.utcOffset();
     
     //TODO: Find more efficient way to do this
     weightRecord.find({
       time: {
-        $gte: startWeek.clone().startOf('day').utc().toDate(),
-        $lt: endWeek.clone().endOf('day').utc().toDate()
+        $gte: start.clone().startOf('day').utc().toDate(),
+        $lt: end.clone().endOf('day').utc().toDate()
       }
     }, function(err, records) {
       if (err) return console.log(err);
@@ -75,10 +75,10 @@ module.exports = (function (server_mg, server_passport) {
       records.map(function(record) {
         recordsMap[moment(record.time).utcOffset(offset).startOf('day')] = [record.weight, record._id, record.time];
       });
-      const start = startWeek.clone().startOf('day');
+      const startDay = start.clone().startOf('day');
       records = []
       for (var i = 0; i < 7; i++) {
-        let date = start.clone().add(i, "d");
+        let date = startDay.clone().add(i, "d");
         if (date in recordsMap) {
           records.push({
             id: recordsMap[date][1],
@@ -97,21 +97,6 @@ module.exports = (function (server_mg, server_passport) {
   }  
   return router
 });
-  
-/**
-* Given a date of the week, return an array
-* containing the [startDate, endDate] of the
-* week, respecting the original time zone and 
-* format of the input
-* @param date a Moment instance
-*/
-
-function getWeek(date) {
-  var start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days');
-  var end = start.clone().add(6, 'days');
-  return [start, end];
-}
-
 
 function isLoggedIn(req, res, next) {
     console.log(req.isAuthenticated());

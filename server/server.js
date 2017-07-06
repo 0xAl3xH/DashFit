@@ -30,7 +30,7 @@ const express = require('express'),
       passport = require('passport'),
       session = require('express-session'),
       expressStaticGzip = require("express-static-gzip"),
-      logWeight = require('./modules/log-weight.js')(mg, passport),
+      logWeight = require('./modules/weight.js')(mg, passport),
       authenticate = require('./modules/authenticate.js')(mg, passport);
 
 require('./modules/config/passport.js')(passport);
