@@ -19,17 +19,12 @@ import Icon from 'components/Icon/Icon';
 // Import "widgets"
 import LogIn from 'widgets/LogInWidget/LogInWidget';
 import LogWeight from 'widgets/LogWeightWidget/LogWeightWidget';
+import Visualize from 'widgets/VisualizeWeightWidget/VisualizeWeightWidget';
 
 
 // Default (desktop, tablet) and mobile setup
 const Desktop = ({ children }) => <Responsive minWidth={768} children={children} />;
 const Mobile = ({ children }) => <Responsive maxWidth={768} children={children} />;
-
-const Visualize = () => (
-    <MainContent>
-      <Title>Visualize</Title>
-    </MainContent>
-);
 
 class App extends React.Component {
   
@@ -56,7 +51,7 @@ class App extends React.Component {
   componentDidMount() {
     getAuthenticationStatus().then(loggedOn =>{
       this.loggedInHandler(loggedOn);
-      setTimeout(() => this.fetchHandler(false), 1500)
+      this.fetchHandler(false);
     });
   }
   
