@@ -1,36 +1,72 @@
-//TODO: Look into webpack aliasing for relative imports to avoid ../../../........hell
 import React from 'react';
+import moment from 'moment';
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
-import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 
 export default class VisualizeWeightWidget extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {};
+    this.state.weightData = [];
+  }
+  
+  componentDidMount() {
+    this.updateWeightData();
+  }
+  
+  getWeightData(start,end) {
+    return fetch('/weight/query',{
+      method:'POST',
+      headers: {"Content-Type":'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({
+        start:moment(start).format(), 
+        end:moment(end).format()
+      })
+    });
+  }
+  
+  updateWeightData() {
+    const curTime = moment()
+    this.getWeightData(curTime.clone().subtract(6,'months'), curTime).then(res =>{
+      return res.json();
+    }).then(data =>{
+      let sum = 0,
+          recordCount = 0,
+          count = 0;
+      data = data.map(datum => {
+        //Take 7 day average
+        if (datum.weight) {
+          sum += datum.weight;
+          recordCount += 1;
+        }
+        count += 1;
+        if (count >= 7) {
+          datum.avg = sum/recordCount
+          sum = 0;
+          recordCount = 0;
+          count = 0;
+        }
+        
+        datum.time = moment(datum.time).format('M/D');
+        return datum;
+      });
+      this.setState({weightData: data})
+    });
   }
 
   render () {
-    
-    const data = [
-      {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-      {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-      {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-      {name: 'Page D', uv: null, pv: null, amt: 2000},
-      {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-      {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-      {name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
-    ];
-    
     return ( 
       <MainContent>
         <Title>Visualize Weight</Title>
         <ResponsiveContainer aspect={2} height="auto">
-          <LineChart data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" connectNulls={false}/>
-            <Line type="monotone" dataKey="pv" stroke="#82ca9d" />
+          <LineChart data={this.state.weightData}>
+            <Line type="monotone" dataKey="weight" stroke="#8884d8" connectNulls={false} dot={false}/>
+            <Line type="monotone" dataKey="avg" stroke="#006000" connectNulls={true}/>
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <XAxis dataKey="time" />
+            <YAxis domain={['dataMin-0.5','dataMax+0.5']} tickCount={10} allowDecimals={false}/>
           </LineChart>
         </ResponsiveContainer>
       </MainContent>

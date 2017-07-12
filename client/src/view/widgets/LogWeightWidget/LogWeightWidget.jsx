@@ -1,4 +1,3 @@
-//TODO: Look into webpack aliasing for relative imports to avoid ../../../........hell
 import React from 'react';
 import moment from 'moment';
 import MainContent from 'components/MainContent/MainContent';
