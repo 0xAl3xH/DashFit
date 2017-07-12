@@ -62,7 +62,7 @@ module.exports = (function (server_mg, server_passport) {
   **/
   function returnRecord(start, end, res) {
     let offset = start.utcOffset();
-    
+    const numDays = end.clone().startOf('day').diff(start.clone().startOf('day'),'days') + 1;
     //TODO: Find more efficient way to do this
     weightRecord.find({
       time: {
@@ -77,7 +77,7 @@ module.exports = (function (server_mg, server_passport) {
       });
       const startDay = start.clone().startOf('day');
       records = []
-      for (var i = 0; i < 7; i++) {
+      for (var i = 0; i < numDays; i++) {
         let date = startDay.clone().add(i, "d");
         if (date in recordsMap) {
           records.push({
@@ -95,7 +95,7 @@ module.exports = (function (server_mg, server_passport) {
       res.json(records);
     });  
   }  
-  return router
+  return router;
 });
 
 function isLoggedIn(req, res, next) {
