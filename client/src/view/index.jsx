@@ -77,7 +77,12 @@ class App extends React.Component {
   }
   
   mobileNavClickHandler() {
-    this.setState({showNav:!this.state.showNav})
+    this.setState({showNav:!this.state.showNav});
+  }
+  
+  hideNav() {
+    console.log('hiding nav');
+    this.setState({showNav:false});
   }
   
   renderDashBoard() {
@@ -93,7 +98,7 @@ class App extends React.Component {
             <Nav className="desktop"/>
           </Desktop>
           <Mobile>
-            <Nav className="mobile" show={this.state.showNav} expandHeight={window.innerHeight-this.state.offset}/>
+            <Nav className="mobile" show={this.state.showNav} expandHeight={window.innerHeight-this.state.offset} hideNav={this.hideNav.bind(this)}/>
           </Mobile>
           {this.props.children}
         </div>

@@ -7,8 +7,8 @@ export default class Nav extends React.Component {
       <div className = {"nav-container" + " " + 
           this.props.className} 
         style={ (this.props.show? {height:this.props.expandHeight} : {})}>
-        <NavItem to = "/weight" name = "Log Weight"/>
-        <NavItem to = "/visualize" name = "Visualize"/>
+        <NavItem to = "/weight" name = "Log Weight" onClick={this.props.hideNav}/>
+        <NavItem to = "/visualize" name = "Visualize" onClick={this.props.hideNav}/>
       </div>
     );
   }
