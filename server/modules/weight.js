@@ -61,8 +61,14 @@ module.exports = (function (server_mg, server_passport) {
   * @param res the response object for the request
   **/
   function returnRecord(start, end, res) {
-    let offset = start.utcOffset();
-    const numDays = end.clone().startOf('day').diff(start.clone().startOf('day'),'days') + 1;
+    let offset = start.utcOffset(),
+        numDays = end.clone().startOf('day').diff(start.clone().startOf('day'),'days') + 1;
+    console.log(start.isDST(), end.isDST());
+    // If daylight savings has occured bt start and end, add 1 more day
+    if (start.utcOffset() != end.utcOffset()) {
+      numDays ++;
+    }
+    console.log(numDays);
     //TODO: Find more efficient way to do this
     weightRecord.find({
       time: {
@@ -76,6 +82,7 @@ module.exports = (function (server_mg, server_passport) {
         recordsMap[moment(record.time).utcOffset(offset).startOf('day')] = [record.weight, record._id, record.time];
       });
       const startDay = start.clone().startOf('day');
+      console.log(records.length);
       records = []
       for (var i = 0; i < numDays; i++) {
         let date = startDay.clone().add(i, "d");

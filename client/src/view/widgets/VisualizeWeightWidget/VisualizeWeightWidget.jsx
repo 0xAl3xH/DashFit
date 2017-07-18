@@ -29,6 +29,7 @@ export default class VisualizeWeightWidget extends React.Component {
   
   updateWeightData() {
     const curTime = moment()
+    console.log(curTime);
     this.getWeightData(curTime.clone().subtract(6,'months'), curTime).then(res =>{
       return res.json();
     }).then(data =>{
@@ -57,6 +58,7 @@ export default class VisualizeWeightWidget extends React.Component {
   }
 
   render () {
+    console.log(this.state.weightData);
     return ( 
       <MainContent>
         <Title>Visualize Weight</Title>
