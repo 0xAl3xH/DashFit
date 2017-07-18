@@ -35,8 +35,12 @@ export default class VisualizeWeightWidget extends React.Component {
     }).then(data =>{
       let sum = 0,
           recordCount = 0,
-          count = 0;
+          count = 0,
+          weeks = moment().endOf('year').diff(moment(),'weeks'),
+          goalWeight = 165;
       data = data.map(datum => {
+        //goal weight 
+        datum.goal = goalWeight + 0.75 * weeks;
         //Take 7 day average
         if (datum.weight) {
           sum += datum.weight;
@@ -66,6 +70,7 @@ export default class VisualizeWeightWidget extends React.Component {
           <LineChart data={this.state.weightData}>
             <Line type="monotone" dataKey="weight" stroke="#8884d8" connectNulls={false} dot={false}/>
             <Line type="monotone" dataKey="avg" stroke="#006000" connectNulls={true}/>
+            <Line type="linear" dataKey="goal" stroke="#b21b1b" dot={false} strokeDasharray="20 10"/>
             <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
             <XAxis dataKey="time" />
             <YAxis domain={['dataMin-0.5','dataMax+0.5']} tickCount={10} allowDecimals={false}/>
