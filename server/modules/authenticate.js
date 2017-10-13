@@ -1,6 +1,5 @@
-module.exports = (function (server_mg, server_passport) {
-  const mg = server_mg,
-        router = require('express').Router(),
+module.exports = (function (server_passport) {
+  const router = require('express').Router(),
         passport = server_passport;
   
   // process the login form
