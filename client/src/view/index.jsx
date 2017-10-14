@@ -20,6 +20,7 @@ import Icon from 'components/Icon/Icon';
 import LogIn from 'widgets/LogInWidget/LogInWidget';
 import LogWeight from 'widgets/LogWeightWidget/LogWeightWidget';
 import Visualize from 'widgets/VisualizeWeightWidget/VisualizeWeightWidget';
+import LogMeal from 'widgets/LogMealWidget/LogMealWidget';
 
 
 // Default (desktop, tablet) and mobile setup
@@ -142,6 +143,7 @@ render((
       <IndexRoute component = {()=><LogWeight/>}/>
       <Route path = "weight" component = {()=><LogWeight/>}/>
       <Route path = "visualize" component = {Visualize}/>
+      <Route path = "meals" component = {()=><LogMeal/>} />
     </Route>
   </Router>
 ),document.getElementById('app'));

@@ -9,6 +9,7 @@ export default class Nav extends React.Component {
         style={ (this.props.show? {height:this.props.expandHeight} : {})}>
         <NavItem to = "/weight" name = "Log Weight" onClick={this.props.hideNav}/>
         <NavItem to = "/visualize" name = "Visualize" onClick={this.props.hideNav}/>
+        <NavItem to = "/meals" name = "Log Meals" onClick={this.props.hideNav}/>
       </div>
     );
   }
