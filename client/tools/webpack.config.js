@@ -19,6 +19,8 @@ const config = {
     extensions: ['.js', '.jsx'],
     alias: {
       widgets: path.resolve(__dirname, '../src/view/widgets'),
+      stores: path.resolve(__dirname, '../src/view/stores'),
+      actions: path.resolve(__dirname, '../src/view/actions'),
       components: path.resolve(__dirname, '../src/view/components'),
       shared_styles: path.resolve(__dirname,'../src/view/shared_styles')  //Prepend import with ~ for less-loader e.g ~shared_styles
     }
