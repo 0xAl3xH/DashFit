@@ -18,6 +18,7 @@ const config = {
     ],
     extensions: ['.js', '.jsx'],
     alias: {
+      view: path.resolve(__dirname, '../src/view'),
       widgets: path.resolve(__dirname, '../src/view/widgets'),
       stores: path.resolve(__dirname, '../src/view/stores'),
       actions: path.resolve(__dirname, '../src/view/actions'),

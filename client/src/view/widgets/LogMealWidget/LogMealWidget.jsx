@@ -9,8 +9,16 @@ export default class LogMeal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      meals: LogMealStore.getTest()
+      meals: LogMealStore.getTest(),
     }
+  }
+  
+  componentWillMount() {
+    LogMealStore.on("MEAL_CREATED", () => {
+      this.setState({
+        meals: LogMealStore.getTest(),
+      });
+    });
   }
   
   componentDidMount() {
