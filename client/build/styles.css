@@ -1361,10 +1361,10 @@ there.
 .react-datepicker__portal .react-datepicker__navigation--next:hover {
   border-left-color: #b3b2b2;
 }
+.button-meal-option {
+  margin: 2px 5px;
+}
 .flattened-row td {
   padding-bottom: 0px;
   border-bottom: 0px;
-}
-.button-meal-option {
-  margin: 0px 5px;
 }
