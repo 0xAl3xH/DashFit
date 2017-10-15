@@ -34,14 +34,37 @@ class LogMealStore extends EventEmitter {
         }]
       }
     ];
+    this.input_fields = {
+      meal_name: "",
+    };
+    this.component_len = 1;
   }
   
   handleActions(action) {
     switch(action.type) {
-      case "CREATE_MEAL": {
+        
+      case "CREATE_MEAL":
         this.createMeal(action.meal);
-      }
+        break;
+        
+      case "CHANGE_INPUT":
+        this.updateInputVals(action.key, action.val, action.subkey);
+        break;
+        
+      case "CHANGE_COMPONENT_LEN":
+        this.updateComponentLen(action.len);
+        break;
     }
+  }
+  
+  updateInputVals(key, val, subkey) {
+    if (typeof subkey === 'undefined') {
+      this.input_fields[key] = val;
+    }
+    else {
+      this.input_fields[key][subkey] = val
+    }
+    this.emit("INPUT_CHANGED");
   }
   
   createMeal(meal) {
@@ -49,8 +72,31 @@ class LogMealStore extends EventEmitter {
     this.emit("MEAL_CREATED");
   }
   
-  getTest() {
+  updateComponentLen(len) {
+    if (len >= this.component_len) {
+      this.input_fields["component"+(len - 1)] = {
+        name:"",
+        calories: "",
+        protein: "",
+        quantity: "",
+      };
+    } else {
+      delete this.input_fields["component"+(this.component_len - 1)]
+    }
+    this.component_len = len;
+    this.emit("COMPONENT_LEN_CHANGED");
+  }
+  
+  getMeals() {
     return this.meals;
+  }
+  
+  getComponentLen() {
+    return this.component_len;
+  }
+  
+  getInputVals() {
+    return this.input_fields;
   }
 }
 

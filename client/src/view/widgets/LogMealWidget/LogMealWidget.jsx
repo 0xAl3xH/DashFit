@@ -3,25 +3,38 @@ import moment from 'moment';
 import MainContent from 'components/MainContent/MainContent';
 import Title from 'components/MainContent/Title/Title';
 import DayTable from 'widgets/LogMealWidget/DayTable/DayTable';
+import * as LogMealActions from 'actions/LogMealActions';
 import LogMealStore from 'stores/LogMealStore';
 
 export default class LogMeal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      meals: LogMealStore.getTest(),
+      meals: LogMealStore.getMeals(),
     }
+    this.updateMeals = this.updateMeals.bind(this);
   }
   
   componentWillMount() {
-    LogMealStore.on("MEAL_CREATED", () => {
-      this.setState({
-        meals: LogMealStore.getTest(),
-      });
-    });
+    LogMealStore.on("MEAL_CREATED", this.updateMeals);
+  }
+  
+  componentWillUnmount() {
+    LogMealStore.removeListener("MEAL_CREATED", this.updateMeals);
   }
   
   componentDidMount() {
+  }
+  
+  updateMeals() {
+    this.setState({
+      meals: LogMealStore.getMeals(),
+    });
+  }
+  
+  createMeal() {
+    let meal={}
+    LogMealActions.createMeal(meal)
   }
   
   generateMealRows(meals) {

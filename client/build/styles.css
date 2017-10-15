@@ -1368,3 +1368,9 @@ there.
   padding-bottom: 0px;
   border-bottom: 0px;
 }
+.day-log {
+  width: 100%;
+}
+.calories {
+  width: 20%;
+}
