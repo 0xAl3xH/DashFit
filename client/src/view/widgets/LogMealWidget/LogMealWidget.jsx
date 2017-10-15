@@ -34,7 +34,6 @@ export default class LogMeal extends React.Component {
   
   handleMealDelete(id) {
     return () => {
-      console.log(id);
       LogMealActions.deleteMeal(id);
     }
   }
@@ -43,7 +42,7 @@ export default class LogMeal extends React.Component {
     if (this.state.meals) {
       let meal_calorie_list = this.state.meals.map((meal) => {
         return meal.components.reduce((component1, component2) =>{
-          return component1 + component2.calories;
+          return component1 + component2.quantity * component2.calories;
         }, 0);
       });
       return meal_calorie_list.reduce((meal1, meal2) =>{
@@ -56,7 +55,7 @@ export default class LogMeal extends React.Component {
     if (this.state.meals) {
       let meal_protein_list = this.state.meals.map((meal) => {
         return meal.components.reduce((component1, component2) =>{
-          return component1 + component2.protein;
+          return component1 + component2.quantity * component2.protein;
         }, 0);
       });
       return meal_protein_list.reduce((meal1, meal2) =>{
