@@ -5,35 +5,7 @@ import dispatcher from "view/dispatcher"
 class LogMealStore extends EventEmitter {
   constructor() {
     super();
-    this.meals = [
-      {
-        name: 'Lunch',
-        //time
-        components: [{
-          name: 'Salsa Chicken Tray',
-          calories: 420,
-          protein: 30,
-          quantity: 1
-        }, {
-          name: 'Apple',
-          calories: 100,
-          quantity: 1
-        }]
-      }, {
-        name: 'Dinner',
-        //time
-        components: [{
-          name: 'Salsa Chicken Tray',
-          calories: 420,
-          protein: 30,
-          quantity: 1
-        }, {
-          name: 'Apple',
-          calories: 100,
-          quantity: 1
-        }]
-      }
-    ];
+    this.meals = [];
     this.input_fields = {
       meal_name: "",
     };
@@ -43,8 +15,16 @@ class LogMealStore extends EventEmitter {
   handleActions(action) {
     switch(action.type) {
         
+      case "GOT_MEALS":
+        this.updateMeals(action.meals);
+        break;
+        
       case "CREATE_MEAL":
         this.createMeal(action.meal);
+        break;
+        
+      case "DELETE_MEAL":
+        this.deleteMeal(action.meal);
         break;
         
       case "CHANGE_INPUT":
@@ -55,6 +35,20 @@ class LogMealStore extends EventEmitter {
         this.updateComponentLen(action.len);
         break;
     }
+  }
+  
+  deleteMeal(meal) {
+    if (meal) {
+      this.meals = this.meals.filter((el) =>{
+        return el._id !== meal._id;
+      });
+      this.emit("MEALS_UPDATED");
+    }
+  }
+  
+  updateMeals(meals) {
+    this.meals = meals;
+    this.emit("MEALS_UPDATED");
   }
   
   updateInputVals(key, val, subkey) {
@@ -69,7 +63,7 @@ class LogMealStore extends EventEmitter {
   
   createMeal(meal) {
     this.meals.push(meal);
-    this.emit("MEAL_CREATED");
+    this.emit("MEALS_UPDATED");
   }
   
   updateComponentLen(len) {

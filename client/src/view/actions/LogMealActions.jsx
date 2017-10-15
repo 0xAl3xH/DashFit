@@ -10,10 +10,68 @@ export function handleInputChange(key, val, subkey) {
   })
 }
 
+export function getMeals(start, end) {
+  dispatcher.dispatch({
+    type: "GETTING_MEALS"
+  });
+  
+  fetch('/meals/query',{
+    method:'POST',
+    headers: {
+      "Content-Type":'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      start,
+      end
+    })
+  }).then((res) => {
+    return res.json();
+  }).then((meals) => {
+    dispatcher.dispatch({
+        type: "GOT_MEALS",
+        meals,
+      });
+  });
+}
+
 export function createMeal(meal) {
   dispatcher.dispatch({
-    type: "CREATE_MEAL",
-    meal,
+    type: "POSTING_MEAL"
+  });
+  
+  fetch('/meals/submit',{
+    method:'POST',
+    headers: {
+      "Content-Type":'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify(meal)
+  }).then((res) => {
+    return res.json();
+  }).then((meal) => {
+    dispatcher.dispatch({
+        type: "CREATE_MEAL",
+        meal,
+      });
+  });
+}
+
+export function deleteMeal(id) {
+  dispatcher.dispatch({
+    type: "DELETING_MEAL"
+  });
+  
+  fetch('/meals/delete/' + id, {
+    method:'DELETE',
+    credentials: 'include',
+  }).then((res) => {
+    return res.json();
+  }).then((meal) => {
+    dispatcher.dispatch({
+        type: "DELETE_MEAL",
+        meal,
+      });
   });
 }
 

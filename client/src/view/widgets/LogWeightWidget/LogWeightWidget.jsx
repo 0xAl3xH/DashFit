@@ -49,7 +49,7 @@ export default class LogWeight extends React.Component {
     const myHeaders = {
       "Content-Type":'application/json'
     },
-          bound = this.getWeekBounds(date);
+    bound = this.getWeekBounds(date);
     
     return fetch('/weight/query',{
       method:'POST',

@@ -29,6 +29,7 @@ const express = require('express'),
       session = require('express-session'),
       expressStaticGzip = require("express-static-gzip"),
       logWeight = require('./modules/weight.js')(mg, passport),
+      logMeals = require('./modules/meals.js')(mg),
       authenticate = require('./modules/authenticate.js')(passport);
 
 require('./modules/config/passport.js')(passport);
@@ -47,6 +48,7 @@ app.use(passport.session());
 
 app.use(authenticate);
 app.use('/weight', isLoggedIn, logWeight);
+app.use('/meals', isLoggedIn, logMeals);
 
 // wait for db connection to be established before starting server
 conn.once('open', function(){
