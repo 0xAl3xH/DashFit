@@ -39,6 +39,32 @@ export default class LogMeal extends React.Component {
     }
   }
   
+  getTotalCalories() {
+    if (this.state.meals) {
+      let meal_calorie_list = this.state.meals.map((meal) => {
+        return meal.components.reduce((component1, component2) =>{
+          return component1 + component2.calories;
+        }, 0);
+      });
+      return meal_calorie_list.reduce((meal1, meal2) =>{
+        return meal1 + meal2;
+      }, 0);
+    }
+  }
+  
+  getTotalProtein() {
+    if (this.state.meals) {
+      let meal_protein_list = this.state.meals.map((meal) => {
+        return meal.components.reduce((component1, component2) =>{
+          return component1 + component2.protein;
+        }, 0);
+      });
+      return meal_protein_list.reduce((meal1, meal2) =>{
+        return meal1 + meal2;
+      }, 0);
+    }
+  }
+  
   generateMealRows(meals) {
     const rows = [];
     for (let i = 0; i < (meals ? meals.length : 0); i++) {
@@ -90,7 +116,9 @@ export default class LogMeal extends React.Component {
     return ( 
       <MainContent>
         <Title>Meal Log</Title>
-        <h5>Friday, 10/13</h5>
+        <h5>{moment().format('dddd, M/D')}</h5>
+        <div>Total calories: {this.getTotalCalories()}</div>
+        <div>Total Protein: {this.getTotalProtein()}</div>
         <table className="day-log">
           <thead>
             <tr>
