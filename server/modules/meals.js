@@ -44,14 +44,15 @@ module.exports = (function (server_mg) {
   }
   
   function returnRecord(start, end, res) {
+    console.log(start, end);
     mealRecord.find({
       time: {
-        $gte: start.clone().startOf('day').utc().toDate(),
-        $lt: end.clone().endOf('day').utc().toDate()
+        $gte: start.toDate(),
+        $lt: end.toDate()
       }
     }, 
     null, 
-    {sort: {time: -1}}, 
+    {sort: {time: 1}}, 
     function(err, records) {
       if (err) return console.log(err);
       res.json(records);
@@ -59,15 +60,3 @@ module.exports = (function (server_mg) {
   }  
   return router;
 });
-
-function isLoggedIn(req, res, next) {
-    console.log(req.isAuthenticated());
-    // if user is authenticated in the session, carry on 
-    if (req.isAuthenticated()) {
-      console.log("legit user");
-        return next();
-    }
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}
