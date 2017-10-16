@@ -5,18 +5,25 @@ import Title from 'components/MainContent/Title/Title';
 import DayTableInput from 'widgets/LogMealWidget/DayTableInput/DayTableInput';
 import * as LogMealActions from 'actions/LogMealActions';
 import LogMealStore from 'stores/LogMealStore';
+import { includes } from 'lodash';
 
 export default class LogMeal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       meals: LogMealActions.getMeals(moment().startOf('day'), moment().endOf('day')),
+      editted: LogMealStore.getEditted(),
     }
+    window.moment = moment;
+    window.getEditted = LogMealStore.getEditted.bind(LogMealStore);
+    window.getMeals = LogMealActions.getMeals.bind(LogMealStore);
     this.updateMeals = this.updateMeals.bind(this);
+    this.updateEditted = this.updateEditted.bind(this);
   }
   
   componentWillMount() {
     LogMealStore.on("MEALS_UPDATED", this.updateMeals);
+    LogMealStore.on("EDITTED_UPDATED", this.updateEditted);
   }
   
   componentWillUnmount() {
@@ -32,9 +39,23 @@ export default class LogMeal extends React.Component {
     });
   }
   
+  updateEditted() {
+    this.setState({
+      editted: LogMealStore.getEditted(),
+    });
+  }
+  
   handleMealDelete(id) {
     return () => {
       LogMealActions.deleteMeal(id);
+    }
+  }
+  
+  handleMealEdit(id) {
+    return () => {
+      let new_editted = this.state.editted.slice();
+      new_editted.push(id);
+      LogMealActions.updateEditted(new_editted);
     }
   }
   
@@ -90,6 +111,10 @@ export default class LogMeal extends React.Component {
           </tr>
         )
       }
+      if (includes(this.state.editted, meal._id)) {
+        rows.unshift(<DayTableInput key={i} input_id={meal._id}/>);
+      }
+      else {
       rows.unshift(
         <tbody key={i}>
           <tr className="flattened-row">
@@ -100,13 +125,14 @@ export default class LogMeal extends React.Component {
             <td></td>
             <td></td>
             <td>
-              {/*<input className="button-primary button-medium button-meal-option" type="submit" value="Edit" onClick={this.handleMealEdit(i)}/>*/}
+              <input className="button-primary button-medium button-meal-option" type="submit" value="Edit" onClick={this.handleMealEdit(meal._id)}/>
               <input className="button-primary button-medium button-meal-option" type="submit" value="x" onClick={this.handleMealDelete(meal._id)}/>
             </td>
           </tr>
           {components}
         </tbody>
       );
+      }
     }  
     return rows;
   }
@@ -128,7 +154,7 @@ export default class LogMeal extends React.Component {
               <th className = "opt-col">Options</th>
             </tr>
           </thead>
-          <DayTableInput/>
+          <DayTableInput input_id="0"/>
           {this.generateMealRows(this.state.meals)}
         </table>
       </MainContent>

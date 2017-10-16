@@ -1,13 +1,28 @@
 import dispatcher from "view/dispatcher";
 
 //Handles any input changes
-export function handleInputChange(key, val, subkey) {
+export function handleInputChange(key, val, indkey) {
   dispatcher.dispatch({
     type: "CHANGE_INPUT",
     key,
     val,
-    subkey,
+    indkey,
   })
+}
+
+export function updateComponentLen(op, id) {
+  dispatcher.dispatch({
+    type: "CHANGE_COMPONENT_LEN",
+    op,
+    id,
+  });
+}
+
+export function updateEditted(editted) {
+  dispatcher.dispatch({
+    type: "UPDATE_EDITTED",
+    editted,
+  });
 }
 
 export function getMeals(start, end) {
@@ -35,7 +50,7 @@ export function getMeals(start, end) {
   });
 }
 
-export function createMeal(meal) {
+export function createMeal(meal, ind) {
   dispatcher.dispatch({
     type: "POSTING_MEAL"
   });
@@ -53,6 +68,7 @@ export function createMeal(meal) {
     dispatcher.dispatch({
         type: "CREATE_MEAL",
         meal,
+        ind
       });
   });
 }
@@ -72,12 +88,5 @@ export function deleteMeal(id) {
         type: "DELETE_MEAL",
         meal,
       });
-  });
-}
-
-export function updateComponentLen(len) {
-  dispatcher.dispatch({
-    type: "CHANGE_COMPONENT_LEN",
-    len,
   });
 }

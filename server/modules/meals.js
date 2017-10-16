@@ -30,7 +30,27 @@ module.exports = (function (server_mg) {
   });
   
   function addRecord(record, res) {
-    mealRecord.create(record, function (err, saved_record) {
+    console.log(record);
+    const query = {
+      _id: record._id
+    }
+    // No null _id fields allowed
+    if (!query._id) {
+      query._id = new mg.mongo.ObjectID();
+    }
+    const update = {
+            $setOnInsert:{
+              time:record.time
+            },
+            $set:{
+              name: record.name,
+              components: record.components
+            }
+          },
+          options = {upsert:true, new:true, setDefaultsOnInsert:true}; //Create a new doc with default schema if not found
+    delete record._id;
+    console.log(record);
+    mealRecord.findOneAndUpdate(query, update, options, function (err, saved_record) {
       if (err) return console.log(err);
       res.json(saved_record);
     });

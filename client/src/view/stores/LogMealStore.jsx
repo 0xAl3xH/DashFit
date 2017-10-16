@@ -1,15 +1,23 @@
 import { EventEmitter } from "events";
-
+import { includes, find} from "lodash";
 import dispatcher from "view/dispatcher"
 
 class LogMealStore extends EventEmitter {
   constructor() {
     super();
     this.meals = [];
-    this.input_fields = {
-      meal_name: "",
+    this.inputs = {
+      0: {
+        name:"",
+        components:[{
+          name:"",
+          calories:"",
+          protein:"",
+          quantity:"",
+        }]
+      },
     };
-    this.component_len = 1;
+    this.editted = [];
   }
   
   handleActions(action) {
@@ -20,19 +28,23 @@ class LogMealStore extends EventEmitter {
         break;
         
       case "CREATE_MEAL":
-        this.createMeal(action.meal);
+        this.createMeal(action.meal, action.ind);
         break;
         
       case "DELETE_MEAL":
         this.deleteMeal(action.meal);
         break;
         
+      case "UPDATE_EDITTED":
+        this.updateEditted(action.editted);
+        break;
+        
       case "CHANGE_INPUT":
-        this.updateInputVals(action.key, action.val, action.subkey);
+        this.updateInputVals(action.key, action.val, action.indkey);
         break;
         
       case "CHANGE_COMPONENT_LEN":
-        this.updateComponentLen(action.len);
+        this.updateComponentLen(action.op, action.id);
         break;
     }
   }
@@ -51,34 +63,43 @@ class LogMealStore extends EventEmitter {
     this.emit("MEALS_UPDATED");
   }
   
-  updateInputVals(key, val, subkey) {
-    if (typeof subkey === 'undefined') {
-      this.input_fields[key] = val;
+  updateEditted(editted) {
+    this.editted = editted;
+    this.emit("EDITTED_UPDATED");
+  }
+  
+  updateInputVals(key, val, indkey) {
+    if (typeof indkey === 'undefined') {
+      this.inputs[key].name = val;
     }
     else {
-      this.input_fields[key][subkey] = val
+      this.inputs[key].components[indkey[0]][indkey[1]] = val
     }
     this.emit("INPUT_CHANGED");
   }
   
-  createMeal(meal) {
-    this.meals.push(meal);
+  createMeal(meal, ind) {
+    if (typeof ind === 'undefined') {
+      this.meals.push(meal);  
+    } else {
+      this.meals[ind] = meal;
+    }
     this.emit("MEALS_UPDATED");
   }
   
-  updateComponentLen(len) {
-    if (len >= this.component_len) {
-      this.input_fields["component"+(len - 1)] = {
+  updateComponentLen(op, id) {
+    console.log(this.inputs[id]);
+    if (op == 'inc') {
+      this.inputs[id].components.push({
         name:"",
         calories: "",
         protein: "",
         quantity: "",
-      };
+      });
     } else {
-      delete this.input_fields["component"+(this.component_len - 1)]
+      this.inputs[id].components.pop()
     }
-    this.component_len = len;
-    this.emit("COMPONENT_LEN_CHANGED");
+    this.emit("INPUT_CHANGED");
   }
   
   getMeals() {
@@ -89,8 +110,15 @@ class LogMealStore extends EventEmitter {
     return this.component_len;
   }
   
-  getInputVals() {
-    return this.input_fields;
+  getInputVals(id) {
+    if (!includes(Object.keys(this.inputs), id)) {
+      this.inputs[id] = find(this.meals, {_id: id});
+    }
+    return this.inputs[id];
+  }
+
+  getEditted() {
+    return this.editted;
   }
 }
 
