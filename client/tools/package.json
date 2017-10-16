@@ -7,7 +7,7 @@
     "start": "webpack-dev-server --env development --content-base ../build",
     "watch": "webpack -d --watch",
     "build": "webpack -p",
-    "build-prod": "webpack --config webpack.config.prod.js"
+    "build-prod": "webpack --env.gzip"
   },
   "repository": {
     "type": "git",
