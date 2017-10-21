@@ -1,10 +1,12 @@
 import { EventEmitter } from "events";
 import { includes, find} from "lodash";
-import dispatcher from "view/dispatcher"
+import dispatcher from "view/dispatcher";
+import moment from 'moment';
 
 class LogMealStore extends EventEmitter {
   constructor() {
     super();
+    this.date = moment();
     this.meals = [];
     this.inputs = {
       0: {
@@ -39,6 +41,10 @@ class LogMealStore extends EventEmitter {
         this.updateEditted(action.editted);
         break;
         
+      case "UPDATE_DATE":
+        this.updateDate(action.date);
+        break;
+        
       case "CHANGE_INPUT":
         this.updateInputVals(action.key, action.val, action.indkey);
         break;
@@ -66,6 +72,11 @@ class LogMealStore extends EventEmitter {
   updateEditted(editted) {
     this.editted = editted;
     this.emit("EDITTED_UPDATED");
+  }
+  
+  updateDate(date) {
+    this.date = date;
+    this.emit("DATE_UPDATED");
   }
   
   updateInputVals(key, val, indkey) {
@@ -119,6 +130,10 @@ class LogMealStore extends EventEmitter {
 
   getEditted() {
     return this.editted;
+  }
+  
+  getDate() {
+    return this.date;
   }
 }
 

@@ -6,19 +6,24 @@ import DayTableInput from 'widgets/LogMealWidget/DayTableInput/DayTableInput';
 import * as LogMealActions from 'actions/LogMealActions';
 import LogMealStore from 'stores/LogMealStore';
 import { includes } from 'lodash';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.less';
 
 export default class LogMeal extends React.Component {
   constructor(props) {
     super(props);
+    
+    let now = moment();
+    LogMealActions.getMeals(now.startOf('day'), now.endOf('day'))
+    
     this.state = {
-      meals: LogMealActions.getMeals(moment().startOf('day'), moment().endOf('day')),
+      date: now,
+      meals: LogMealStore.getMeals(),
       editted: LogMealStore.getEditted(),
     }
-    window.moment = moment;
-    window.getEditted = LogMealStore.getEditted.bind(LogMealStore);
-    window.getMeals = LogMealActions.getMeals.bind(LogMealStore);
     this.updateMeals = this.updateMeals.bind(this);
     this.updateEditted = this.updateEditted.bind(this);
+    this.updateDate = this.updateDate.bind(this);
   }
   
   componentWillMount() {
@@ -28,6 +33,7 @@ export default class LogMeal extends React.Component {
   
   componentWillUnmount() {
     LogMealStore.removeListener("MEAL_UPDATED", this.updateMeals);
+    LogMealStore.removeListener("EDITTED_UPDATED", this.updateEditted);
   }
   
   componentDidMount() {
@@ -42,6 +48,13 @@ export default class LogMeal extends React.Component {
   updateEditted() {
     this.setState({
       editted: LogMealStore.getEditted(),
+    });
+  }
+  
+  updateDate(date) {
+    LogMealActions.getMeals(date.clone().startOf('day'), date.clone().endOf('day'));
+    this.setState({
+      date,
     });
   }
   
@@ -141,6 +154,10 @@ export default class LogMeal extends React.Component {
     return ( 
       <MainContent>
         <Title>Meal Log</Title>
+        <div>
+          <label htmlFor="datepicker">Select Date:</label>
+          <DatePicker selected={this.state.date} onChange={this.updateDate} tetherConstraints={[]}/>
+        </div>
         <h5>{moment().format('dddd, M/D')}</h5>
         <div>Total calories: {this.getTotalCalories()}</div>
         <div>Total Protein: {this.getTotalProtein()}</div>

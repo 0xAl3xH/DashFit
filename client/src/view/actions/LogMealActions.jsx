@@ -25,6 +25,13 @@ export function updateEditted(editted) {
   });
 }
 
+export function updateDate(date) {
+  dispatcher.dispatch({
+    type:"UPDATE_DATE",
+    date
+  });
+}
+
 export function getMeals(start, end) {
   dispatcher.dispatch({
     type: "GETTING_MEALS"
