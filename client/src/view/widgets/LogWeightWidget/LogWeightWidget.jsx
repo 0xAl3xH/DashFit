@@ -15,6 +15,14 @@ import WeightForm from './WeightForm/WeightForm';
 export default class LogWeight extends React.Component {
   constructor(props) {
     super(props);
+    
+    // Set start of week to Tuesday
+    moment.updateLocale('en', {
+      week : {
+        dow: 2,
+      }
+    });
+    
     this.state = {
       selectedDate: moment(),
       weightRecords:[],
@@ -28,14 +36,13 @@ export default class LogWeight extends React.Component {
   /**
   * Given a date of the week, return an array
   * containing the [startDate, endDate] of the
-  * week, respecting the original time zone and 
-  * format of the input
+  * week as defined by the locale
   * @param date a Moment instance
   */
 
   getWeekBounds(date) {
-    let start = date.clone().subtract((date.clone().day() + 7 - 2)%7,'days'),
-        end = start.clone().add(6, 'days');
+    let start = date.clone().startOf('week'),
+        end = start.clone().endOf('week');
     return [start, end];
   }
   

@@ -9,6 +9,12 @@ export default class VisualizeWeightWidget extends React.Component {
     super(props);
     this.state = {};
     this.state.weightData = [];
+    // Set start of week to Tuesday
+    moment.updateLocale('en', {
+      week : {
+        dow: 2,
+      }
+    });
   }
   
   componentDidMount() {
@@ -36,24 +42,30 @@ export default class VisualizeWeightWidget extends React.Component {
           recordCount = 0,
           count = 0,
           weeks = moment().endOf('year').diff(moment(),'weeks'),
-          goalWeight = 165;
+          goalWeight = 165,
+          weekStart = moment();
       data = data.map(datum => {
-        //goal weight 
+        // Goal weight 
+        datum.time = moment(datum.time);
         datum.goal = goalWeight + 0.75 * weeks;
-        //Take 7 day average
-        if (datum.weight) {
-          sum += datum.weight;
-          recordCount += 1;
-        }
-        count += 1;
-        if (count >= 7) {
-          datum.avg = sum/recordCount
+        
+        // Check if data is in the same week
+        // note average will be plotted on start of next week with this code
+        if (!weekStart.isSame(datum.time.clone().startOf('week'))) {
+          if (sum) {
+            datum.avg = sum/count;
+          }
+          weekStart = datum.time.clone().startOf('week');
           sum = 0;
-          recordCount = 0;
           count = 0;
         }
         
-        datum.time = moment(datum.time).format('M/D');
+        if (datum.weight) {
+          sum += datum.weight;
+          count += 1;
+        }
+        
+        datum.time = datum.time.format('M/D');
         return datum;
       });
       this.setState({weightData: data})
