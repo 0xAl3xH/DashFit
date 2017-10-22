@@ -60,7 +60,7 @@ export default class DayTableInput extends React.Component {
     const meal_input = this.state.meal;
     const meal = {
       name: meal_input.name,
-      time: moment.now(),
+      time: this.props.time,
       components: [],
     };
     

@@ -14,8 +14,7 @@ export default class LogMeal extends React.Component {
     super(props);
     
     let now = moment();
-    LogMealActions.getMeals(now.startOf('day'), now.endOf('day'))
-    
+    LogMealActions.getMeals(now.clone().startOf('day'), now.clone().endOf('day'));
     this.state = {
       date: now,
       meals: LogMealStore.getMeals(),
@@ -54,7 +53,7 @@ export default class LogMeal extends React.Component {
   updateDate(date) {
     LogMealActions.getMeals(date.clone().startOf('day'), date.clone().endOf('day'));
     this.setState({
-      date,
+      date: date.clone().hour(moment().hour()).minute(moment().minute()),
     });
   }
   
@@ -125,7 +124,7 @@ export default class LogMeal extends React.Component {
         )
       }
       if (includes(this.state.editted, meal._id)) {
-        rows.unshift(<DayTableInput key={i} input_id={meal._id}/>);
+        rows.unshift(<DayTableInput key={i} input_id={meal._id} time={this.state.date}/>);
       }
       else {
       rows.unshift(
@@ -155,7 +154,7 @@ export default class LogMeal extends React.Component {
       <MainContent>
         <Title>Meal Log</Title>
         <div>
-          <label htmlFor="datepicker">Select Date:</label>
+          <label>Select Date:</label>
           <DatePicker selected={this.state.date} onChange={this.updateDate} tetherConstraints={[]}/>
         </div>
         <h5>{moment().format('dddd, M/D')}</h5>
@@ -171,7 +170,7 @@ export default class LogMeal extends React.Component {
               <th className = "opt-col">Options</th>
             </tr>
           </thead>
-          <DayTableInput input_id="0"/>
+          <DayTableInput input_id="0" time={this.state.date}/>
           {this.generateMealRows(this.state.meals)}
         </table>
       </MainContent>
