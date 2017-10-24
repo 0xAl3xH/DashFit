@@ -140,5 +140,4 @@ class LogMealStore extends EventEmitter {
 const logMealStore = new LogMealStore;
 // Bind logMealStore so "this" is correct 
 dispatcher.register(logMealStore.handleActions.bind(logMealStore));
-window.dispatcher = dispatcher;
 export default logMealStore;
