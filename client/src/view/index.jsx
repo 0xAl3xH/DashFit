@@ -21,6 +21,7 @@ import LogIn from 'widgets/LogInWidget/LogInWidget';
 import LogWeight from 'widgets/LogWeightWidget/LogWeightWidget';
 import Visualize from 'widgets/VisualizeWeightWidget/VisualizeWeightWidget';
 import LogMeal from 'widgets/LogMealWidget/LogMealWidget';
+import ReviewDay from 'widgets/ReviewDayWidget/ReviewDayWidget';
 
 
 // Default (desktop, tablet) and mobile setup
@@ -140,10 +141,11 @@ function getAuthenticationStatus() {
 render((
   <Router history = {hashHistory}>
     <Route path = "/" component = {App}>
-      <IndexRoute component = {()=><LogWeight/>}/>
-      <Route path = "weight" component = {()=><LogWeight/>}/>
+      <IndexRoute component = {LogWeight}/>
+      <Route path = "weight" component = {LogWeight}/>
       <Route path = "visualize" component = {Visualize}/>
-      <Route path = "meals" component = {()=><LogMeal/>} />
+      <Route path = "meals" component = {LogMeal} />
+      <Route path = "review-day" component = {ReviewDay} />
     </Route>
   </Router>
 ),document.getElementById('app'));
