@@ -1,139 +1,53 @@
 import { EventEmitter } from "events";
-import { includes, find} from "lodash";
 import dispatcher from "view/dispatcher";
 import moment from 'moment';
 
 class ReviewDayStore extends EventEmitter {
   constructor() {
     super();
-    this.date = moment();
-    this.meals = [];
-    this.inputs = {
-      0: {
-        name:"",
-        components:[{
-          name:"",
-          calories:"",
-          protein:"",
-          quantity:"",
-        }]
-      },
-    };
-    this.editted = [];
+    this.comment = "";
+    this.rating = 0;
   }
   
   handleActions(action) {
     switch(action.type) {
-        
-      case "GOT_MEALS":
-        this.updateMeals(action.meals);
+      case "UPDATE_RATING":
+        this.updateRating(action.rating);
         break;
-        
-      case "CREATE_MEAL":
-        this.createMeal(action.meal, action.ind);
+      case "UPDATE_COMMENT":
+        this.updateComment(action.comment);
         break;
-        
-      case "DELETE_MEAL":
-        this.deleteMeal(action.meal);
-        break;
-        
-      case "UPDATE_EDITTED":
-        this.updateEditted(action.editted);
-        break;
-        
-      case "UPDATE_DATE":
-        this.updateDate(action.date);
-        break;
-        
-      case "CHANGE_INPUT":
-        this.updateInputVals(action.key, action.val, action.indkey);
-        break;
-        
-      case "CHANGE_COMPONENT_LEN":
-        this.updateComponentLen(action.op, action.id);
+      case "GOT_REVIEW":
+        this.gotReview(action.review);
         break;
     }
   }
   
-  deleteMeal(meal) {
-    if (meal) {
-      this.meals = this.meals.filter((el) =>{
-        return el._id !== meal._id;
-      });
-      this.emit("MEALS_UPDATED");
-    }
+  updateRating(rating) { 
+    this.rating = rating;
+    this.emit("RATING_UPDATED");
+  }  
+  getRating() {
+    return this.rating;
   }
   
-  updateMeals(meals) {
-    this.meals = meals;
-    this.emit("MEALS_UPDATED");
+  updateComment(comment) {
+    this.comment = comment;
+    this.emit("COMMENT_UPDATED");
+  }
+  getComment() {
+    return this.comment;
   }
   
-  updateEditted(editted) {
-    this.editted = editted;
-    this.emit("EDITTED_UPDATED");
-  }
-  
-  updateDate(date) {
-    this.date = date;
-    this.emit("DATE_UPDATED");
-  }
-  
-  updateInputVals(key, val, indkey) {
-    if (typeof indkey === 'undefined') {
-      this.inputs[key].name = val;
-    }
-    else {
-      this.inputs[key].components[indkey[0]][indkey[1]] = val
-    }
-    this.emit("INPUT_CHANGED");
-  }
-  
-  createMeal(meal, ind) {
-    if (typeof ind === 'undefined') {
-      this.meals.push(meal);  
+  gotReview(review) {
+    if (review) {
+      this.comment = review.comment;
+      this.rating = review.rating; 
     } else {
-      this.meals[ind] = meal;
+      this.comment = "";
+      this.rating = 0;
     }
-    this.emit("MEALS_UPDATED");
-  }
-  
-  updateComponentLen(op, id) {
-    console.log(this.inputs[id]);
-    if (op == 'inc') {
-      this.inputs[id].components.push({
-        name:"",
-        calories: "",
-        protein: "",
-        quantity: "",
-      });
-    } else {
-      this.inputs[id].components.pop()
-    }
-    this.emit("INPUT_CHANGED");
-  }
-  
-  getMeals() {
-    return this.meals;
-  }
-  
-  getComponentLen() {
-    return this.component_len;
-  }
-  
-  getInputVals(id) {
-    if (!includes(Object.keys(this.inputs), id)) {
-      this.inputs[id] = find(this.meals, {_id: id});
-    }
-    return this.inputs[id];
-  }
-
-  getEditted() {
-    return this.editted;
-  }
-  
-  getDate() {
-    return this.date;
+    this.emit("REVIEW_GOT");
   }
 }
 

@@ -70,6 +70,8 @@ module.exports = (function (server_mg, server_passport) {
     }
     console.log(numDays);
     //TODO: Find more efficient way to do this
+    //FIX: bug where visualize getting data from 30 months generates empty spots in the next year
+    // has to do with DST switch (wrong behavior with EST -5)
     weightRecord.find({
       time: {
         $gte: start.clone().startOf('day').utc().toDate(),
@@ -94,11 +96,11 @@ module.exports = (function (server_mg, server_passport) {
           });
         } else {
           records.push({
-            time: date
+            time: date,
           });
         }
       }
-      console.log(records);
+      console.log(records, records.length);
       res.json(records);
     });  
   }  
