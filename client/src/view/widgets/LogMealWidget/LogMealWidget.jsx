@@ -155,7 +155,7 @@ export default class LogMeal extends React.Component {
         <Title>Meal Log</Title>
         <div>
           <label>Select Date:</label>
-          <DatePicker selected={this.state.date} onChange={this.updateDate} tetherConstraints={[]}/>
+          <DatePicker selected={this.state.date} readOnly={true} onChange={this.updateDate} tetherConstraints={[]}/>
         </div>
         <h5>{this.state.date.format('dddd, M/D')}</h5>
         <div>Total calories: {this.getTotalCalories()}</div>

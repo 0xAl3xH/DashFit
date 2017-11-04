@@ -1422,9 +1422,6 @@ there.
   -moz-transition: all 0.01s;
   transition: all 0.01s;
 }
-input[name="react-star-rating"] {
-  display: none !important;
-}
 .rsr__caption {
   font-size: 1.25em;
   vertical-align: middle;

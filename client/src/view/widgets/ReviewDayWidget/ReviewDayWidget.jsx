@@ -90,7 +90,7 @@ export default class ReviewDay extends React.Component {
         <Title>Day Review</Title>
         <div>
           <label>Select Date:</label>
-          <DatePicker selected={this.state.date} onChange={this.updateDate} tetherConstraints={[]}/>
+          <DatePicker selected={this.state.date} readOnly={true} onChange={this.updateDate} tetherConstraints={[]}/>
         </div>
         <div>
           <label>Rate Day:</label>
