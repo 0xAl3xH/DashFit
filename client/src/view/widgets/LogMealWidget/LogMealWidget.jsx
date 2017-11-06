@@ -14,7 +14,6 @@ export default class LogMeal extends React.Component {
     super(props);
     
     let now = moment();
-    LogMealActions.getMeals(now.clone().startOf('day'), now.clone().endOf('day'));
     this.state = {
       date: now,
       meals: LogMealStore.getMeals(),
@@ -26,12 +25,13 @@ export default class LogMeal extends React.Component {
   }
   
   componentWillMount() {
+    LogMealActions.getMeals(this.state.date.clone().startOf('day'), this.state.date.clone().endOf('day'));
     LogMealStore.on("MEALS_UPDATED", this.updateMeals);
     LogMealStore.on("EDITTED_UPDATED", this.updateEditted);
   }
   
   componentWillUnmount() {
-    LogMealStore.removeListener("MEAL_UPDATED", this.updateMeals);
+    LogMealStore.removeListener("MEALS_UPDATED", this.updateMeals);
     LogMealStore.removeListener("EDITTED_UPDATED", this.updateEditted);
   }
   
