@@ -15,8 +15,9 @@ module.exports = (function (server_mg, server_passport) {
         });
   
   router.post('/query', function(req, res){
-    const start = moment.parseZone(req.body.start),
-          end = moment.parseZone(req.body.end);
+    //Start and end MUST be a moment parseable string with timezone preserved
+    const start = moment(req.body.start),
+          end = moment(req.body.end);
     console.log(start,end);
     returnRecord(start,end,res);
   });
@@ -63,28 +64,20 @@ module.exports = (function (server_mg, server_passport) {
   function returnRecord(start, end, res) {
     let offset = start.utcOffset(),
         numDays = end.clone().startOf('day').diff(start.clone().startOf('day'),'days') + 1;
-    console.log(start.isDST(), end.isDST());
-    // If daylight savings has occured bt start and end, add 1 more day
-    if (start.utcOffset() != end.utcOffset()) {
-      numDays ++;
-    }
     console.log(numDays);
     //TODO: Find more efficient way to do this
-    //FIX: bug where visualize getting data from 30 months generates empty spots in the next year
-    // has to do with DST switch (wrong behavior with EST -5)
     weightRecord.find({
       time: {
-        $gte: start.clone().startOf('day').utc().toDate(),
-        $lt: end.clone().endOf('day').utc().toDate()
+        $gte: start.clone().startOf('day').toDate(),
+        $lt: end.clone().endOf('day').toDate()
       }
     }, function(err, records) {
       if (err) return console.log(err);
       const recordsMap = {};
       records.map(function(record) {
-        recordsMap[moment(record.time).utcOffset(offset).startOf('day')] = [record.weight, record._id, record.time];
+        recordsMap[moment(record.time).startOf('day')] = [record.weight, record._id, record.time];
       });
       const startDay = start.clone().startOf('day');
-      console.log(records.length);
       records = []
       for (var i = 0; i < numDays; i++) {
         let date = startDay.clone().add(i, "d");
