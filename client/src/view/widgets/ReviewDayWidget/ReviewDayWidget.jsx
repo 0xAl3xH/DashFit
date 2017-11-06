@@ -72,7 +72,8 @@ export default class ReviewDay extends React.Component {
   
   saveReview() {
     const review = {
-      date: this.state.date,
+      //Keep date as a string since moment's .toJSON discards time zone info
+      date: this.state.date.format(),
       rating: this.state.rating,
       comment: this.state.comment
     };
