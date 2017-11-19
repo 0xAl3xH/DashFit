@@ -121,7 +121,7 @@ export default class ReviewDay extends React.Component {
         <div className="review-day-comments-container">
           <label>Comments:</label>
           {this.state.saved ? <span className="autosave-status">Changes saved...</span> : <span className="autosave-status">Some Changes Unsaved...</span>}
-          <textarea id="review-day-comments" type="text" maxLength="1000" onChange={this.updateComment} value={this.state.comment}></textarea>
+          <textarea id="review-day-comments" type="text" maxLength="5000" onChange={this.updateComment} value={this.state.comment}></textarea>
         </div>
           <input className="button-primary button-medium review-day-save-button" type="submit" value="Save" onClick={this.saveReview}/>
       </MainContent>
