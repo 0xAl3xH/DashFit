@@ -55,6 +55,7 @@ export default class ReviewDay extends React.Component {
   
   updateDate(date) {
     ReviewDayActions.getReview(date.clone().hour(moment().hour()).minute(moment().minute()));
+    ReviewDayStore.once("REVIEW_GOT", this.getReview);
     this.setState({
       date: date.clone().hour(moment().hour()).minute(moment().minute()),
     });
