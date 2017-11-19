@@ -118,7 +118,7 @@ export default class ReviewDay extends React.Component {
           <label>Rate Day:</label>
           <StarRating name="react-star-rating" rating={this.state.rating} editing={true} totalStars={5} onRatingClick={(e, d)=>{this.updateRating(d.rating)}} />
         </div>
-        <div>
+        <div className="review-day-comments-container">
           <label>Comments:</label>
           {this.state.saved ? <span className="autosave-status">Changes saved...</span> : <span className="autosave-status">Some Changes Unsaved...</span>}
           <textarea id="review-day-comments" type="text" maxLength="1000" onChange={this.updateComment} value={this.state.comment}></textarea>
