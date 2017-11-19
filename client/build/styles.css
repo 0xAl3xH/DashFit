@@ -1397,6 +1397,9 @@ there.
 .review-day-save-button {
   margin: 5px 0px;
 }
+.autosave-status {
+  float: right;
+}
 .rsr-root {
   vertical-align: middle;
   display: inline-block;

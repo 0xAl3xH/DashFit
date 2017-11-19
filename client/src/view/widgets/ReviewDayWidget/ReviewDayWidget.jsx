@@ -18,28 +18,39 @@ export default class ReviewDay extends React.Component {
       date: now,
       rating: ReviewDayStore.getRating(),
       comment: "",
+      saved: true
     }
     this.updateDate = this.updateDate.bind(this);
+    this.updateRating = this.updateRating.bind(this);
+    this.updateComment = this.updateComment.bind(this);
     this.getRating = this.getRating.bind(this);
     this.getComment = this.getComment.bind(this);
     this.saveReview = this.saveReview.bind(this);
     this.getReview = this.getReview.bind(this);
+    this.autoSave = this.autoSave.bind(this);
   }
   
   componentWillMount() {
     ReviewDayStore.on("RATING_UPDATED", this.getRating);
     ReviewDayStore.on("COMMENT_UPDATED", this.getComment);
-    ReviewDayStore.on("REVIEW_GOT", this.getReview);
+    // Get the review initially
+    ReviewDayStore.once("REVIEW_GOT", this.getReview);
     ReviewDayActions.getReview(this.state.date);
+    setInterval(this.autoSave, 5000);
   }
   
   componentWillUnmount() {
     ReviewDayStore.removeListener("RATING_UPDATED", this.getRating);
     ReviewDayStore.removeListener("COMMENT_UPDATED", this.getComment);
-    ReviewDayStore.removeListener("REVIEW_GOT", this.getReview);
   }
   
   componentDidMount() {
+  }
+  
+  autoSave() {
+    if (!this.state.saved) {
+      this.saveReview();
+    }
   }
   
   updateDate(date) {
@@ -57,16 +68,23 @@ export default class ReviewDay extends React.Component {
   }
   
   updateRating(rating) {
+    this.setState({
+      saved: false
+    });
     ReviewDayActions.updateRating(rating);
+    console.log(this.state.saved);
   }
   
   getComment() {
     this.setState({
-      comment: ReviewDayStore.getComment()
+      comment: ReviewDayStore.getComment(),
     });
   }
   
   updateComment(e) {
+    this.setState({
+      saved: false
+    });
     ReviewDayActions.updateComment(e.target.value);
   }
   
@@ -78,6 +96,9 @@ export default class ReviewDay extends React.Component {
       comment: this.state.comment
     };
     ReviewDayActions.saveReview(review);
+    this.setState({
+      saved: true,
+    });
   }
   
   getReview() {
@@ -99,6 +120,7 @@ export default class ReviewDay extends React.Component {
         </div>
         <div>
           <label>Comments:</label>
+          {this.state.saved ? <span className="autosave-status">Changes saved...</span> : <span className="autosave-status">Some Changes Unsaved...</span>}
           <textarea id="review-day-comments" type="text" maxLength="1000" onChange={this.updateComment} value={this.state.comment}></textarea>
         </div>
           <input className="button-primary button-medium review-day-save-button" type="submit" value="Save" onClick={this.saveReview}/>
