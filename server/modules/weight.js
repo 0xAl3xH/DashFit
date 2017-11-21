@@ -18,7 +18,7 @@ module.exports = (function (server_mg, server_passport) {
     //Start and end MUST be a moment parseable string with timezone preserved
     const start = moment(req.body.start),
           end = moment(req.body.end);
-    console.log(start,end);
+    console.log(start.format(),end.format());
     returnRecord(start,end,res);
   });
   
@@ -36,9 +36,8 @@ module.exports = (function (server_mg, server_passport) {
     const momentTime = moment.parseZone(record.time),
           query = {
             time: {
-              //@TODO figure out if the usage of .utc() is necessary 
-              $gte: momentTime.clone().startOf('day').utc().toDate(),
-              $lt: momentTime.clone().endOf('day').utc().toDate()
+              $gte: momentTime.clone().startOf('day').toDate(),
+              $lt: momentTime.clone().endOf('day').toDate()
             }
           },
           update = {
@@ -62,30 +61,30 @@ module.exports = (function (server_mg, server_passport) {
   * @param res the response object for the request
   **/
   function returnRecord(start, end, res) {
-    let offset = start.utcOffset(),
-        numDays = end.clone().startOf('day').diff(start.clone().startOf('day'),'days') + 1;
+    let numDays = end.clone().diff(start.clone(),'days') + 1;
     console.log(numDays);
     //TODO: Find more efficient way to do this
     weightRecord.find({
       time: {
-        $gte: start.clone().startOf('day').toDate(),
-        $lt: end.clone().endOf('day').toDate()
+        $gte: start.clone().toDate(),
+        $lt: end.clone().toDate()
       }
     }, function(err, records) {
       if (err) return console.log(err);
       const recordsMap = {};
       records.map(function(record) {
-        recordsMap[moment(record.time).startOf('day')] = [record.weight, record._id, record.time];
+        recordsMap[moment(record.time).format('M-D-Y')] = [record.weight, record._id, record.time];
       });
-      const startDay = start.clone().startOf('day');
+      const startDay = start.clone();
       records = []
       for (var i = 0; i < numDays; i++) {
         let date = startDay.clone().add(i, "d");
-        if (date in recordsMap) {
+        let day = date.format('M-D-Y');
+        if (day in recordsMap) {
           records.push({
-            id: recordsMap[date][1],
-            time: recordsMap[date][2],
-            weight: recordsMap[date][0]
+            id: recordsMap[day][1],
+            time: recordsMap[day][2],
+            weight: recordsMap[day][0]
           });
         } else {
           records.push({
