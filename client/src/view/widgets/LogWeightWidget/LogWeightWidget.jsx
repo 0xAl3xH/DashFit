@@ -77,9 +77,37 @@ export default class LogWeight extends React.Component {
     this.getWeek(date).then(res =>{
       return res.json();
     }).then(records => {
-      this.setState({weightRecords:records});
-      //console.log("Time zone test:");
-      //console.log(this.state.selectedDate, moment());
+      
+      let bound = this.getWeekBounds(date),
+          start = moment(bound[0]),
+          end = moment(bound[1]),
+          numDays = end.clone().diff(start.clone(),'days') + 1;
+      
+      const recordsMap = {};
+      records.map(function(record) {
+        recordsMap[moment(record.time).format('M-D-Y')] = [record.weight, record._id, record.time];
+      });
+      const startDay = start.clone();
+      let precords = []
+      
+      // populate empty days 
+      for (var i = 0; i < numDays; i++) {
+        let date = startDay.clone().add(i, "d"),
+            day = date.format('M-D-Y');
+        if (day in recordsMap) {
+          precords.push({
+            id: recordsMap[day][1],
+            time: recordsMap[day][2],
+            weight: recordsMap[day][0]
+          });
+        } else {
+          precords.push({
+            time: date,
+          });
+        }
+      }
+      
+      this.setState({weightRecords:precords});
       let record = this.getRecordByDate(moment(this.state.selectedDate));
       const cur_weight = record ? record.weight : null;
       this.setState({curWeight: cur_weight ? cur_weight : ""});
@@ -121,7 +149,7 @@ export default class LogWeight extends React.Component {
     for (let i = 0; i < records.length; i++) {
       rows.push(
         <tr key={i}>
-          <td>{moment(records[i].time).local().format('M/D')}</td>
+          <td>{moment(records[i].time).format('M/D')}</td>
           <td>{records[i].weight ? records[i].weight.toFixed(1) : null}</td>
         </tr>);
     }  
@@ -134,7 +162,7 @@ export default class LogWeight extends React.Component {
   * that matches returns undefined if not found.
   **/ 
   getRecordByDate(date) {
-    const weight = this.state.weightRecords.filter((record) => {return date.isSame(record.time,'day')});
+    const weight = this.state.weightRecords.filter((record) => {return date.isSame(record.time, 'day')});
     return weight.pop();
   }
   
@@ -152,7 +180,6 @@ export default class LogWeight extends React.Component {
         weight: this.state.curWeight
       })
     }).then(res =>{
-      console.log(res);
       this.setNewState(this.state.selectedDate);
     });  
   }

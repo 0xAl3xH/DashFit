@@ -34,17 +34,45 @@ export default class VisualizeWeightWidget extends React.Component {
   }
   
   updateWeightData() {
-    const curTime = moment()
-    this.getWeightData(curTime.clone().subtract(30,'months'), curTime).then(res =>{
+    const curTime = moment(),
+          start = curTime.clone().subtract(30,'months'),
+          end = curTime;
+    this.getWeightData(start, end).then(res =>{
       return res.json();
-    }).then(data =>{
+    }).then(records =>{
       let sum = 0,
           recordCount = 0,
           count = 0,
           weeks = moment().endOf('year').diff(moment(),'weeks'),
           goalWeight = 165,
-          weekStart = moment();
-      data = data.map(datum => {
+          weekStart = moment(),
+          numDays = end.clone().diff(start.clone(),'days') + 1;
+      
+      const recordsMap = {};
+      records.map(function(record) {
+        recordsMap[moment(record.time).format('M-D-Y')] = [record.weight, record._id, record.time];
+      });
+      const startDay = start.clone();
+      let precords = []
+      
+      // populate empty days
+      for (var i = 0; i < numDays; i++) {
+        let date = startDay.clone().add(i, "d"),
+            day = date.format('M-D-Y');
+        if (day in recordsMap) {
+          precords.push({
+            id: recordsMap[day][1],
+            time: recordsMap[day][2],
+            weight: recordsMap[day][0]
+          });
+        } else {
+          precords.push({
+            time: date,
+          });
+        }
+      }
+      
+      let data = precords.map(datum => {
         // Goal weight 
         datum.time = moment(datum.time);
         datum.goal = goalWeight + 0.75 * weeks;

@@ -53,9 +53,7 @@ module.exports = (function (server_mg, server_passport) {
   
   /**
   * Returns the records within the specified range of time
-  * by day. If a record does not exist on a particular day 
-  * the returned object will just be that date with no 
-  * other fields.
+  * by day.
   * @param start a moment instance
   * @param end a moment instance 
   * @param res the response object for the request
@@ -71,28 +69,31 @@ module.exports = (function (server_mg, server_passport) {
       }
     }, function(err, records) {
       if (err) return console.log(err);
-      const recordsMap = {};
-      records.map(function(record) {
-        recordsMap[moment(record.time).format('M-D-Y')] = [record.weight, record._id, record.time];
-      });
-      const startDay = start.clone();
-      records = []
-      for (var i = 0; i < numDays; i++) {
-        let date = startDay.clone().add(i, "d");
-        let day = date.format('M-D-Y');
-        if (day in recordsMap) {
-          records.push({
-            id: recordsMap[day][1],
-            time: recordsMap[day][2],
-            weight: recordsMap[day][0]
-          });
-        } else {
-          records.push({
-            time: date,
-          });
-        }
-      }
-      console.log(records, records.length);
+//      const recordsMap = {};
+//      records.map(function(record) {
+//        recordsMap[moment(record.time).format('M-D-Y')] = [record.weight, record._id, record.time];
+//      });
+//      const startDay = start.clone().utc();
+//      records = []
+//      for (var i = 0; i < numDays; i++) {
+//        let date = startDay.clone().add(i, "d");
+//        let day = date.format('M-D-Y');
+//        console.log(date, day, recordsMap);
+//        if (day in recordsMap) {
+//          records.push({
+//            id: recordsMap[day][1],
+//            time: recordsMap[day][2],
+//            weight: recordsMap[day][0]
+//          });
+//        } else {
+//          records.push({
+//            time: date,
+//          });
+//        }
+//      }
+//      console.log(records, records.length);
+//      res.json(records);
+      console.log(records);
       res.json(records);
     });  
   }  
