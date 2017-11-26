@@ -14,15 +14,21 @@ export default class ReviewDay extends React.Component {
     super(props);
     
     let now = moment();
+    
     this.state = {
       date: now,
       rating: ReviewDayStore.getRating(),
       comment: "",
       saved: true
     }
+    
+    this.lastKeystrokeTime = moment();
+    this.saving = false;
+    
     this.updateDate = this.updateDate.bind(this);
     this.updateRating = this.updateRating.bind(this);
     this.updateComment = this.updateComment.bind(this);
+    this.updateSaveStatus = this.updateSaveStatus.bind(this);
     this.getRating = this.getRating.bind(this);
     this.getComment = this.getComment.bind(this);
     this.saveReview = this.saveReview.bind(this);
@@ -35,20 +41,25 @@ export default class ReviewDay extends React.Component {
     ReviewDayStore.on("COMMENT_UPDATED", this.getComment);
     // Get the review initially
     ReviewDayStore.once("REVIEW_GOT", this.getReview);
+    ReviewDayStore.on("REVIEW_GOT", this.updateSaveStatus);
     ReviewDayActions.getReview(this.state.date);
-    setInterval(this.autoSave, 5000);
+    setInterval(this.autoSave, 200);
   }
   
   componentWillUnmount() {
     ReviewDayStore.removeListener("RATING_UPDATED", this.getRating);
     ReviewDayStore.removeListener("COMMENT_UPDATED", this.getComment);
+    ReviewDayStore.removeListener("REVIEW_GOT", this.updateSaveStatus);
   }
   
   componentDidMount() {
   }
   
   autoSave() {
-    if (!this.state.saved) {
+    // See if user is still typing
+    const stillTyping = moment().diff(this.lastKeystrokeTime, 'milliseconds') < 750;
+    
+    if (!this.state.saved && !stillTyping && !this.saving) {
       this.saveReview();
     }
   }
@@ -73,7 +84,7 @@ export default class ReviewDay extends React.Component {
       saved: false
     });
     ReviewDayActions.updateRating(rating);
-    console.log(this.state.saved);
+    this.lastKeystrokeTime = moment();
   }
   
   getComment() {
@@ -87,6 +98,14 @@ export default class ReviewDay extends React.Component {
       saved: false
     });
     ReviewDayActions.updateComment(e.target.value);
+    this.lastKeystrokeTime = moment();
+  }
+  
+  updateSaveStatus() {
+    this.setState({
+      saved: true,
+    });
+    this.saving = false;
   }
   
   saveReview() {
@@ -97,15 +116,14 @@ export default class ReviewDay extends React.Component {
       comment: this.state.comment
     };
     ReviewDayActions.saveReview(review);
-    this.setState({
-      saved: true,
-    });
+    this.saving = true;
   }
   
   getReview() {
     this.getRating();
     this.getComment();
   }
+  
   
   render() {
     return (
