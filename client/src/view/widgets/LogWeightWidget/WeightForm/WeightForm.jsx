@@ -61,7 +61,7 @@ function SubmitForm(props) {
   return (
     <div className="six columns">
       <label htmlFor="weight-input">Input Weight:</label>
-      <input id="weight-input" type="text" value={props.inputWeight} onChange={props.handleChangeInput}/>
+      <input id="weight-input" type="number" value={props.inputWeight} onChange={props.handleChangeInput}/>
       <input className="button-primary button-medium weight-submit" type="submit" value="Submit" onClick={props.handleSubmit}/>
     </div>
   );
