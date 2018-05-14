@@ -4,7 +4,7 @@ import {Router, Route, IndexRoute, Link, hashHistory} from 'react-router';
 import Responsive from 'react-responsive';
 
 // Use Skeleton styling boilerplate
-import './shared_styles/skeleton.less'
+import 'shared_styles/skeleton.less'
 
 // Import React components
 import HelloWorld from 'components/Test/HelloWorld';

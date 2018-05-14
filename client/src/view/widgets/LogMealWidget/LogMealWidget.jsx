@@ -7,7 +7,7 @@ import * as LogMealActions from 'actions/LogMealActions';
 import LogMealStore from 'stores/LogMealStore';
 import { includes } from 'lodash';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.less';
+import 'shared_styles/react-datepicker.less';
 
 export default class LogMeal extends React.Component {
   constructor(props) {

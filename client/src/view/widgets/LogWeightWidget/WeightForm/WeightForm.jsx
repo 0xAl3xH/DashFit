@@ -1,6 +1,6 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.less';
+import 'shared_styles/react-datepicker.less';
 
 /**
 * The component with which users input his/her weight, 

@@ -6,8 +6,8 @@ import * as ReviewDayActions from 'actions/ReviewDayActions';
 import ReviewDayStore from 'stores/ReviewDayStore';
 import DatePicker from 'react-datepicker';
 import StarRating from 'react-star-rating';
-import 'react-star-rating/dist/css/react-star-rating.less';
-import 'react-datepicker/dist/react-datepicker.less';
+import 'shared_styles/react-star-rating.less';
+import 'shared_styles/react-datepicker.less';
 
 export default class ReviewDay extends React.Component {
   constructor(props) {

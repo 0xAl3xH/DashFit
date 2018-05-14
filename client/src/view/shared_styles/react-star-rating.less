@@ -1,0 +1,48 @@
+@color_1: #e3e3e3;
+@color_2: #F5A71B;
+
+.rsr-root {
+    vertical-align: middle;
+    display: inline-block;
+}
+.rsr--editing {
+    &:hover {
+        cursor: pointer;
+    }
+}
+.rsr {
+    position: relative;
+    vertical-align: middle;
+    display: inline-block;
+    color: @color_1;
+    overflow: hidden;
+}
+.rsr__stars {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: @color_2;
+    -webkit-transition: all 0.01s;
+    -moz-transition: all 0.01s;
+    transition: all 0.01s;
+}
+
+//input[name="react-star-rating"] {
+//    display: none !important;
+//}
+
+.rsr__caption {
+    font-size: 1.25em;
+    vertical-align: middle;
+    margin-right: 0.5em;
+}
+.rsr--disabled {
+    .rsr-container {
+        &:hover {
+            cursor: not-allowed;
+        }
+    }
+}
+
