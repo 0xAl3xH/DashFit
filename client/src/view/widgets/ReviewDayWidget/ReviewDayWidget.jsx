@@ -5,6 +5,7 @@ import Title from 'components/MainContent/Title/Title';
 import * as ReviewDayActions from 'actions/ReviewDayActions';
 import ReviewDayStore from 'stores/ReviewDayStore';
 import DatePicker from 'react-datepicker';
+// star-rating has been modified - original author is inactive. @TODO Consider making this its own module under view?
 import StarRating from 'react-star-rating';
 import 'shared_styles/react-star-rating.less';
 import 'shared_styles/react-datepicker.less';
