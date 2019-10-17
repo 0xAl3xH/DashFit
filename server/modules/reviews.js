@@ -66,7 +66,7 @@ module.exports = (function (server_mg) {
   * @param res the response object for the request
   **/
   function returnRecord(start, end, res) {
-    reviewRecord.findOne({
+    reviewRecord.find({
       time: {
         $gte: start.toDate(),
         $lt: end.toDate()
