@@ -40,17 +40,21 @@ export default class ReviewDay extends React.Component {
   componentWillMount() {
     ReviewDayStore.on("RATING_UPDATED", this.getRating);
     ReviewDayStore.on("COMMENT_UPDATED", this.getComment);
+    ReviewDayStore.on("REVIEW_SAVED", this.updateSaveStatus);
+    
+    let bounds = this.getCalendarBounds(this.state.date.clone());
     // Get the review initially
     ReviewDayStore.once("REVIEW_GOT", this.getReview);
-    ReviewDayStore.on("REVIEW_GOT", this.updateSaveStatus);
-    ReviewDayActions.getReview(this.state.date);
+    ReviewDayActions.getReview(bounds[0], bounds[1]);
+    ReviewDayActions.updateDate(this.state.date);
+    
     setInterval(this.autoSave, 200);
   }
   
   componentWillUnmount() {
     ReviewDayStore.removeListener("RATING_UPDATED", this.getRating);
     ReviewDayStore.removeListener("COMMENT_UPDATED", this.getComment);
-    ReviewDayStore.removeListener("REVIEW_GOT", this.updateSaveStatus);
+    ReviewDayStore.removeListener("REVIEW_SAVED", this.updateSaveStatus);
   }
   
   componentDidMount() {
@@ -65,18 +69,30 @@ export default class ReviewDay extends React.Component {
     }
   }
   
-  updateDate(date) {
-    ReviewDayActions.getReview(date.clone().hour(moment().hour()).minute(moment().minute()));
-    ReviewDayStore.once("REVIEW_GOT", this.getReview);
-    this.setState({
-      date: date.clone().hour(moment().hour()).minute(moment().minute()),
-    });
+  getCalendarBounds(date) {
+    let start = date.clone().startOf('month').subtract(date.clone().startOf('month').day(), 'day'),
+        end = date.clone().endOf('month').add(6 - date.clone().endOf('month').day(), 'day');
+    return [start, end];
   }
   
-  
-  getRating() {
+  updateDate(date) {
+    // date clicked on with hour and minute updated to current time
+    let clickDate = date.clone().hour(moment().hour()).minute(moment().minute());
+    
+    // Request data only if month has changed
+    if (date.month() != this.state.date.month()) {
+      console.log('requesting new data');
+      let bounds = this.getCalendarBounds(date);
+      ReviewDayActions.updateDate(clickDate);
+      ReviewDayStore.once("REVIEW_GOT", this.getReview);
+      ReviewDayActions.getReview(bounds[0], bounds[1]);
+    } else {
+      // already have this cached if month has not changed
+      ReviewDayStore.once("DATE_UPDATED", this.getReview);
+      ReviewDayActions.updateDate(clickDate);
+    }
     this.setState({
-      rating: ReviewDayStore.getRating(),
+      date: clickDate,
     });
   }
   
@@ -87,6 +103,13 @@ export default class ReviewDay extends React.Component {
     ReviewDayActions.updateRating(rating);
     this.lastKeystrokeTime = moment();
   }
+  
+  getRating() {
+    this.setState({
+      rating: ReviewDayStore.getRating(),
+    });
+  }
+  
   
   getComment() {
     this.setState({
@@ -107,6 +130,8 @@ export default class ReviewDay extends React.Component {
       saved: true,
     });
     this.saving = false;
+    
+    //console.log(ReviewDayStore.getReviews());
   }
   
   saveReview() {
@@ -121,8 +146,21 @@ export default class ReviewDay extends React.Component {
   }
   
   getReview() {
+    console.log("update view");
     this.getRating();
     this.getComment();
+  }
+  
+  highlightDates(date) {
+    let reviews = ReviewDayStore.getReviews(),
+        dayKey = date.clone().startOf('day'),
+        review = reviews[dayKey];
+    if (review) {
+      if (review.comment) 
+        return 'highlight-day comment';
+      else 
+        return 'highlight-day rating';
+    }
   }
   
   
@@ -132,11 +170,11 @@ export default class ReviewDay extends React.Component {
         <Title>Day Review</Title>
         <div>
           <label>Select Date:</label>
-          <DatePicker selected={this.state.date} readOnly={true} onChange={this.updateDate} tetherConstraints={[]}/>
+          <DatePicker id="datepicker" selected={this.state.date} readOnly={true} onChange={this.updateDate} tetherConstraints={[]} dayClassName={date => this.highlightDates(date)}/>
         </div>
         <div>
           <label>Rate Day:</label>
-          <StarRating name="react-star-rating" rating={this.state.rating} editing={true} totalStars={5} onRatingClick={(e, d)=>{this.updateRating(d.rating)}} />
+          <StarRating name="react-star-rating" rating={this.state.rating} editing={true} totalStars={5} onRatingClick={(e, d)=>{this.updateRating(d.rating)}}/>
         </div>
         <div className="review-day-comments-container">
           <label>Comments:</label>

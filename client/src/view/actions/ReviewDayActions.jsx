@@ -1,9 +1,16 @@
 import dispatcher from "view/dispatcher";
 
+export function updateDate(date) {
+  dispatcher.dispatch({
+    type: "UPDATE_DATE",
+    date
+  });
+}
+
 export function updateRating(rating) {
   dispatcher.dispatch({
     type: "UPDATE_RATING",
-    rating,
+    rating
   });
 }
 
@@ -32,19 +39,19 @@ export function saveReview(review) {
     return res.json();
   }).then((review) => {
     dispatcher.dispatch({
-        type: "GOT_REVIEW",
+        type: "SAVED_REVIEW",
         review,
       });
   });
 }
 
-export function getReview(time) {
+export function getReview(startt, endt) {
   dispatcher.dispatch({
     type: "GETTING_REVIEW"
   });
   
-  const start = time.clone().startOf('day'),
-        end = time.clone().endOf('day');
+  const start = startt,
+        end = endt;
   
   fetch('/reviews/query', {
     method:'POST',
@@ -58,10 +65,10 @@ export function getReview(time) {
     })
   }).then((res) => {
     return res.json();
-  }).then((review) => {
+  }).then((reviews) => {
     dispatcher.dispatch({
         type: "GOT_REVIEW",
-        review,
+        reviews,
       });
   });
 }
