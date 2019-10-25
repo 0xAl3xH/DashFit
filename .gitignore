@@ -3,3 +3,6 @@
 *npm-debug.log
 *nohup.out
 client/build/bundle.js
+client/build/styles.css
+client/build/bundle.js.*
+client/build/styles.css.*
