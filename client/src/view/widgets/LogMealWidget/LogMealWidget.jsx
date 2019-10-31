@@ -78,9 +78,9 @@ export default class LogMeal extends React.Component {
           return component1 + component2.quantity * component2.calories;
         }, 0);
       });
-      return meal_calorie_list.reduce((meal1, meal2) =>{
+      return Math.round(meal_calorie_list.reduce((meal1, meal2) =>{
         return meal1 + meal2;
-      }, 0);
+      }, 0));
     }
   }
   
@@ -91,9 +91,9 @@ export default class LogMeal extends React.Component {
           return component1 + component2.quantity * component2.protein;
         }, 0);
       });
-      return meal_protein_list.reduce((meal1, meal2) =>{
+      return Math.round(meal_protein_list.reduce((meal1, meal2) =>{
         return meal1 + meal2;
-      }, 0);
+      }, 0));
     }
   }
   
