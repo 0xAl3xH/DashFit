@@ -54,7 +54,7 @@ app.use('/reviews', isLoggedIn, reviewDay);
 
 // wait for db connection to be established before starting server
 conn.once('open', function(){
-  console.log("Server started, listening on port 3000");
+  console.log("Server started, listening on port", config.port);
   app.listen(config.port);
 });
 
