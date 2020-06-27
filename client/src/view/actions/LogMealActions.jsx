@@ -10,11 +10,12 @@ export function handleInputChange(key, val, indkey) {
   })
 }
 
-export function updateComponentLen(op, id) {
+export function updateComponentLen(op, id, component) {
   dispatcher.dispatch({
     type: "CHANGE_COMPONENT_LEN",
     op,
     id,
+    component,
   });
 }
 
@@ -37,7 +38,7 @@ export function getMeals(start, end) {
     type: "GETTING_MEALS"
   });
   
-  fetch('/meals/query',{
+  fetch('/meals/query_meals',{
     method:'POST',
     headers: {
       "Content-Type":'application/json'
@@ -53,6 +54,44 @@ export function getMeals(start, end) {
     dispatcher.dispatch({
         type: "GOT_MEALS",
         meals,
+      });
+  });
+}
+
+export function getComponents() {
+  fetch('/meals/query_components',{
+    method:'POST',
+    headers: {
+      "Content-Type":'application/json'
+    },
+    credentials: 'include'
+  }).then((res) => {
+    return res.json();
+  }).then((components) => {
+    console.log(components);
+    // Filter duplicate components
+    let component_records = {}; // name : calories
+    let filtered_components = [];
+    components.forEach(component => {
+      const name = component.name.trim();
+      const calories = component.calories;
+      if (name in component_records) {
+        const calories_set = component_records[name];
+        // check for duplicate by looking at repeated calories
+        if (!calories_set.has(calories)) {
+          filtered_components.push(component);
+          component_records[name].add(calories);
+        }
+      } else {
+        // add to record
+        component_records[name] = new Set([calories]);
+        filtered_components.push(component);
+      }
+    });
+    console.log(filtered_components);
+    dispatcher.dispatch({
+        type: "GOT_COMPONENTS",
+        filtered_components,
       });
   });
 }

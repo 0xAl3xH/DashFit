@@ -1,36 +1,110 @@
 import React from 'react';
 import LogMealStore from 'stores/LogMealStore';
 import * as LogMealActions from 'actions/LogMealActions';
+import Autosuggest from 'react-autosuggest';
 import moment from 'moment';
 import { findIndex } from 'lodash';
+
+// Imagine you have a list of languages that you'd like to autosuggest.
+let suggestionList = [];
+
+// Teach Autosuggest how to calculate suggestions for any given input value.
+const getSuggestions = value => {
+  const inputValue = value.trim().toLowerCase();
+  const inputLength = inputValue.length;
+
+  return inputLength < 3 ? [] : suggestionList.filter(lang =>
+    lang.name.toLowerCase().slice(0, inputLength) === inputValue
+  );
+};
+
+// Use your imagination to render suggestions.
+const renderSuggestion = suggestion => (
+  <div>
+    {suggestion.name + ' (' + suggestion.calories + ' ' + suggestion.protein + ')'}
+  </div>
+);
 
 export default class DayTableInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       meal: LogMealStore.getInputVals(this.props.input_id),
+      autosuggest_val: '',
+      suggestions:[]
     };
+    
+    // When suggestion is clicked, Autosuggest needs to populate the input
+    // based on the clicked suggestion. Teach Autosuggest how to calculate the
+    // input value for every given suggestion.
+    this.getSuggestionValue = suggestion => {
+      const input_id = this.state.meal._id ? this.state.meal._id : 0;
+      delete suggestion._id;
+      this.handleComponentLenChange('inc', input_id, true, suggestion);
+      this.onSuggestionsClearRequested()
+      return ''
+    };
+    
     this.updateInput = this.updateInput.bind(this);
+    this.updateComponents = this.updateComponents.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.createMeal = this.createMeal.bind(this);
     this.clearInputForm = this.clearInputForm.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
   }
   
+  onChange (event, {newValue}) {
+    this.setState({
+      autosuggest_val: newValue
+    });
+  };
+  
+  // Autosuggest will call this function every time you need to update suggestions.
+  // You already implemented this logic above, so just use it.
+  onSuggestionsFetchRequested ({value}) {
+    this.setState({
+      suggestions: getSuggestions(value)
+    });
+  };
+  
+  // Autosuggest will call this function every time you need to clear suggestions.
+  onSuggestionsClearRequested() {
+    this.setState({
+      suggestions: []
+    });
+  };
+  
   componentWillMount() {
+    this.loadComponents();
     LogMealStore.on("INPUT_CHANGED", this.updateInput);
+    LogMealStore.on("COMPONENTS_UPDATED", this.updateComponents);
   }
   
   componentWillUnmount() {
     LogMealStore.removeListener("INPUT_CHANGED", this.updateInput);
+    LogMealStore.removeListener("COMPONENTS_UPDATED", this.updateComponents);
   }
   
   componentDidMount() {
+  }
+  
+  loadComponents() {
+    LogMealActions.getComponents();
   }
   
   updateInput() {
     this.setState({
         meal: LogMealStore.getInputVals(this.props.input_id),
       });
+  }
+  
+  updateComponents() {
+    suggestionList = LogMealStore.getComponents();
+    this.setState({
+      suggestions : LogMealStore.getComponents()
+    });
   }
   
   handleInputChange(key, component_index_key) {
@@ -49,10 +123,10 @@ export default class DayTableInput extends React.Component {
   }
   
   // op can be increment or decrement
-  handleComponentLenChange(op, id, should_change) {
-    console.log(op, should_change)
+  handleComponentLenChange(op, id, should_change, component) {
+    console.log(op, should_change, component);
     if (should_change) {
-      LogMealActions.updateComponentLen(op, id);
+      LogMealActions.updateComponentLen(op, id, component);
     }
   }
   
@@ -128,8 +202,32 @@ export default class DayTableInput extends React.Component {
   
   render () {
     const input_id = this.state.meal._id ? this.state.meal._id : 0;
-    return ( 
+    const suggestions = this.state.suggestions;
+    const value = this.state.autosuggest_val;
+    const getSuggestionValue = this.getSuggestionValue;
+    
+    // Autosuggest will pass through all these props to the input.
+    const inputProps = {
+      placeholder: 'Search past meals',
+      value: value,
+      onChange: this.onChange
+    };
+    console.log(value);
+    return (
       <tbody>
+        <tr className="flattened-row">
+          <td colSpan="4">
+            <Autosuggest
+              suggestions={suggestions}
+              onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+              onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+              getSuggestionValue={getSuggestionValue}
+              renderSuggestion={renderSuggestion}
+              inputProps={inputProps}
+            />
+          </td>
+        </tr>
+        
         <tr className="flattened-row">
           <td>
             <input id="meal-input" type="text" value={this.state.meal.name} placeholder="Meal Name" onChange={this.handleInputChange(input_id)}/>

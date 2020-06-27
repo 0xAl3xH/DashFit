@@ -1,8 +1,57 @@
+@import '~shared_styles/shared_imports.less';
+
 .flattened-row {
   td {
     padding-bottom: 0px;
     border-bottom: 0px;
   }
+}
+
+.react-autosuggest__container {
+  position: relative;
+}
+.react-autosuggest__input--focused {
+  outline: none;
+}
+input.react-autosuggest__input.react-autosuggest__input--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.react-autosuggest__suggestions-container--open {
+  display: block;
+  position: absolute;
+//  top: 51px;
+  width: 100%;
+  border: 1px solid @input_gray;
+  border-top: 0px;
+  background-color: #fff;
+  box-sizing: border-box;
+//  font-family: Helvetica, sans-serif;
+//  font-weight: 300;
+//  font-size: 16px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  max-height: 500%;
+  overflow-y: auto;
+  z-index: 2;
+}
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 10px 20px;
+  margin: 0px;
+  border-bottom: 1px solid @dark_gray;
+  overflow: overlay;
+}
+.react-autosuggest__suggestion--highlighted {
+  background-color: #ddd;
 }
 
 .day-log {

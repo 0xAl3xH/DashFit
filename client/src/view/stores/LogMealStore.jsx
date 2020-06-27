@@ -8,6 +8,7 @@ class LogMealStore extends EventEmitter {
     super();
     this.date = moment();
     this.meals = [];
+    this.components = [];
     this.inputs = {
       0: {
         name:"",
@@ -27,6 +28,10 @@ class LogMealStore extends EventEmitter {
         
       case "GOT_MEALS":
         this.updateMeals(action.meals);
+        break;
+        
+      case "GOT_COMPONENTS":
+        this.updateComponents(action.filtered_components);
         break;
         
       case "CREATE_MEAL":
@@ -50,7 +55,7 @@ class LogMealStore extends EventEmitter {
         break;
         
       case "CHANGE_COMPONENT_LEN":
-        this.updateComponentLen(action.op, action.id);
+        this.updateComponentLen(action.op, action.id, action.component);
         break;
     }
   }
@@ -67,6 +72,11 @@ class LogMealStore extends EventEmitter {
   updateMeals(meals) {
     this.meals = meals;
     this.emit("MEALS_UPDATED");
+  }
+  
+  updateComponents(components) {
+    this.components = components
+    this.emit("COMPONENTS_UPDATED");
   }
   
   updateEditted(editted) {
@@ -98,23 +108,37 @@ class LogMealStore extends EventEmitter {
     this.emit("MEALS_UPDATED");
   }
   
-  updateComponentLen(op, id) {
+  updateComponentLen(op, id, component) {
+    let current_input = this.inputs[id];
     console.log(this.inputs[id]);
     if (op == 'inc') {
+      if (component !== undefined) {
+//        if (this.inputs[id].components.length == 1)
+//          current_input.components.unshift(component)
+//        else
+//          current_input.components.push(component); // add to beginning
+        current_input.components[current_input.components.length - 1] = component
+        //current_input.components.push(component);
+      }
       this.inputs[id].components.push({
-        name:"",
-        calories: "",
-        protein: "",
-        quantity: "",
-      });
+      name:"",
+      calories: "",
+      protein: "",
+      quantity: "",
+      }); 
     } else {
       this.inputs[id].components.pop()
     }
+    console.log(this.inputs[id]);
     this.emit("INPUT_CHANGED");
   }
   
   getMeals() {
     return this.meals;
+  }
+  
+  getComponents() {
+    return this.components;
   }
   
   getComponentLen() {

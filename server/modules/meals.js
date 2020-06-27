@@ -10,14 +10,19 @@ module.exports = (function (server_mg) {
             name: String,
             calories: Number,
             protein: Number,
-            quantity: Number
+            quantity: Number,
+            saved: {type: Boolean, default: false}// whether component will be saved for auto-suggestion
           }]
         });
   
-  router.post('/query', function(req, res){
+  router.post('/query_meals', function(req, res){
     const start = moment.parseZone(req.body.start),
           end = moment.parseZone(req.body.end);
-    returnRecord(start,end,res);
+    returnMeals(start,end,res);
+  });
+  
+  router.post('/query_components', function(req, res){
+    returnComponents(res);
   });
   
   router.post('/submit', function(req, res){
@@ -63,7 +68,31 @@ module.exports = (function (server_mg) {
     });
   }
   
-  function returnRecord(start, end, res) {
+  Array.prototype.extend = function (other_array) {
+    /* You should include a test to check whether other_array really is an array */
+    other_array.forEach(function(v) {this.push(v)}, this);
+  }
+  
+  // Returns all the meal components
+  function returnComponents(res) {
+    mealRecord.find({}, function(err, records){
+      if (err) return console.log(err);
+      let components = [];
+      records.forEach(function(r){
+        components.extend(r.components);
+      });
+      let autosuggests = [];
+      components.forEach(function(component, index){
+        //TODO: 
+        //if (component.saved) then add to autosuggests list
+        autosuggests.push(component);
+      });
+      console.log("Autosuggets items", autosuggests);
+      res.json(autosuggests);
+    });
+  }
+  
+  function returnMeals(start, end, res) {
     console.log(start, end);
     mealRecord.find({
       time: {
