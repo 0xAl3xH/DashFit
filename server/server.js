@@ -22,7 +22,7 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       http = require('http').Server(app),
       router = express.Router(),
-      mg = require('mongoose').connect(config.mongoURI,config.mogoOptions), 
+      mg = require('mongoose');
       conn = mg.connection,
       morgan = require('morgan'),
       passport = require('passport'),
@@ -33,6 +33,7 @@ const express = require('express'),
       reviewDay = require('./modules/reviews.js')(mg),
       authenticate = require('./modules/authenticate.js')(passport);
 
+mg.connect(config.mongoURI,config.mogoOptions);
 require('./modules/config/passport.js')(passport);
 
 app.use(morgan('dev'));
