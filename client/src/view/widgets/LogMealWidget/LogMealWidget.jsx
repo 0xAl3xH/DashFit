@@ -153,13 +153,13 @@ export default class LogMeal extends React.Component {
     return ( 
       <MainContent>
         <Title>Meal Log</Title>
-        <div>
+        <div className="meal-stat-container">
           <label>Select Date:</label>
           <DatePicker id="datepicker" selected={this.state.date} readOnly={true} onChange={this.updateDate} tetherConstraints={[]}/>
+          <h5>{this.state.date.format('dddd, M/D')}</h5>
+          <div className="nutrition">Total calories: {this.getTotalCalories()}</div>
+          <div className="nutrition">Total Protein: {this.getTotalProtein()}</div>
         </div>
-        <h5>{this.state.date.format('dddd, M/D')}</h5>
-        <div>Total calories: {this.getTotalCalories()}</div>
-        <div>Total Protein: {this.getTotalProtein()}</div>
         <table className="day-log">
           <thead>
             <tr>
